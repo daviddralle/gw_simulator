@@ -25,7 +25,7 @@ bash run.sh
 
 1. **Executes `03_run_groundwater.py`**:
    - Routes the daily recharge from `2000-10-01` to `2024-09-30`.
-   - Spins up the steady-state aquifer (since `--skip-spinup` is omitted).
+   - Skips the steady-state spin-up to save time, assuming a fully saturated aquifer base condition.
    - Simulates two parallel scenarios: an **Unimpaired (Natural)** run, and a **With Pumping** run.
    - Calculates the streamflow depletion caused by the pumping by comparing basin-scale discharge between the two scenarios.
    - Saves daily mass balance summaries, depletion time series, and comprehensive diagnostic plots (hydrographs and capture fraction) to the `outputs/gv_24_year/` directory.

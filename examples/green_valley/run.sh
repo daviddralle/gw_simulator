@@ -32,6 +32,7 @@ python scripts/03_run_groundwater.py \
     --pumping-schedule data/GVDB/pumpingSchedule.csv \
     --start-date 2000-10-01 \
     --end-date 2024-09-30 \
+    --skip-spinup \
     --output-dir examples/green_valley/outputs
 
 echo "Simulation complete! Outputs are saved in 'examples/green_valley/outputs/'"
