@@ -67,8 +67,8 @@ In availability-limited mode it also stops if post-integration routing needs mor
 than 0.001 m3/day of correction or if any routed daily flow is below numerical
 tolerance. Floating-point negatives smaller than 1e-10 m3/day are written as zero.
 
-No daily GeoTIFFs are written. The 37-reach, 5,114-day continental Green Valley
-run contains 189,218 rows.
+No daily GeoTIFFs are written. The current 39-reach, 5,114-day continental Green
+Valley run contains 199,446 rows.
 
 ## Standard maps and videos
 

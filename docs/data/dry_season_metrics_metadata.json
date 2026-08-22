@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "configuration": {
+    "months": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "rolling_windows_days": [
+      7,
+      30
+    ],
+    "near_zero_flow_m3d": 1.0,
+    "minimum_fraction_denominator_m3": 1.0
+  },
+  "definitions": {
+    "dry_season_year": "Calendar year containing the configured dry-season months; this avoids splitting June-October at the October 1 water-year boundary.",
+    "complete_season": "True only when every expected calendar day in the configured months is present.",
+    "integrated_fraction": "100 times the seasonal volume numerator divided by seasonal unimpaired streamflow volume; daily percentages are not averaged.",
+    "low_flow_windows": "Minimum consecutive daily mean within the dry season. Missing days break a rolling window.",
+    "comparative_rankings": "Incomplete edge seasons are excluded.",
+    "reach_summary": "Uses complete dry seasons only."
+  },
+  "source_files": {
+    "streamflow_depletion_2010-10-01_to_2024-09-30.csv": "c2804094b4f8d63b9315e6dbe409697ae9d436ff7d7827bc3b61d9ad20ec655b",
+    "reach_daily.parquet": "1264dff513365c07173a816969eb7a1cbc5e878bf2e40885981f50bf62fdaf44",
+    "reaches.gpkg": "ba09948cad94a8eaa3b333b5fed2b383934d6496a9f5370049ad4879bb57a0f9"
+  },
+  "artifacts": {
+    "basin_dry_season_metrics_by_year.csv": {
+      "rows": 15,
+      "bytes": 8578,
+      "sha256": "d328795aa9e33df586e8885848e27e8620a314746d428c6e767cb7092008ed8a"
+    },
+    "reach_dry_season_metrics_by_year.csv": {
+      "rows": 585,
+      "bytes": 297128,
+      "sha256": "c441d4046c8ad9fab892e934266a3959d8951e916b29a3bfeac85968bf557a84"
+    },
+    "reach_dry_season_summary.csv": {
+      "rows": 39,
+      "bytes": 10534,
+      "sha256": "69f641f48ca474c50755796b38694cbfc795a35ccfbd081b095ae4e99d39dc6b"
+    }
+  },
+  "complete_dry_season_years": [
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "incomplete_dry_season_years": [
+    2010,
+    2024
+  ]
+}

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Methods, provisional results, limitations, and data products from a groundwater and streamflow-depletion screening model for the Green Valley subwatershed, California.">
   <title>Green Valley groundwater and streamflow-depletion model</title>
-  <link rel="stylesheet" href="assets/site.css?v=scientific-reader-1">
+  <link rel="stylesheet" href="assets/site.css?v=scientific-reader-2">
 </head>
 <body>
   <header class="site-header">
@@ -13,6 +13,7 @@
     <nav aria-label="Primary navigation">
       <a href="#methods">Methods</a>
       <a href="#figures">Figures</a>
+      <a href="#animations">Animations</a>
       <a href="#outputs">Outputs</a>
       <a href="#limitations">Limitations</a>
       <a href="https://github.com/daviddralle/gw_simulator">Code</a>
@@ -57,10 +58,10 @@
         <div class="summary-table-wrap">
           <table>
             <tbody>
-              <tr><th scope="row">Modeled aquifer area</th><td>15.836 km²</td><th scope="row">Raster grid</th><td>50 m, UTM zone 10N</td></tr>
-              <tr><th scope="row">Stream network</th><td>37 reaches</td><th scope="row">Stream threshold</th><td>0.25 km² contributing area</td></tr>
+              <tr><th scope="row">Watershed boundary</th><td>15.836 km²</td><th scope="row">Active recharge area</th><td>14.896 km²</td></tr>
+              <tr><th scope="row">Stream network</th><td>39 reaches; outlet reach 39</td><th scope="row">Raster grid</th><td>50 m, UTM zone 10N</td></tr>
               <tr><th scope="row">Main simulation</th><td>5,114 daily steps</td><th scope="row">Transient spin-up</th><td>2008-10-01 to 2010-09-30</td></tr>
-              <tr><th scope="row">Reach time series</th><td>189,218 reach-days</td><th scope="row">Streamflow definition</th><td>Groundwater exchange + saturation excess</td></tr>
+              <tr><th scope="row">Reach time series</th><td>199,446 reach-days</td><th scope="row">Stream-loss treatment</th><td>Routed-volume limited</td></tr>
             </tbody>
           </table>
         </div>
@@ -98,23 +99,25 @@
             <span>Figure S5</span>
             <b>Reach-scale depletion summary</b>
           </a>
-          <a class="figure-card" href="demo/green_valley_example.html#cross-section">
+          <a class="figure-card" href="demo/green_valley_example.html#cross-section-2024">
             <img src="assets/thumbs/cross_section.png" alt="Preview of the modeled groundwater cross-section" loading="lazy">
             <span>Figure S6</span>
-            <b>Groundwater cross-section</b>
+            <b>Groundwater cross-section, 2024</b>
+          </a>
+          <a class="figure-card" href="demo/green_valley_example.html#cross-section-2019">
+            <img src="assets/thumbs/cross_section_2019.png" alt="Preview of the 2019 modeled groundwater cross-section" loading="lazy">
+            <span>Figure S7</span>
+            <b>Groundwater cross-section, 2019</b>
           </a>
         </div>
       </section>
 
-      <aside class="scientific-note" aria-label="Figure-set status">
-        <h2>Important status of the displayed figures</h2>
+      <aside class="scientific-note current-run" aria-label="Result-set provenance">
+        <h2>Current example run</h2>
         <p>
-          The full-period figures on this site document the earlier continental-
-          parameter run with an unrestricted two-way fixed-head stream boundary.
-          They are retained to show model behavior and output structure. The
-          current standard method limits losing-stream exchange to routed surface
-          water available at each adaptive substep. A complete 14-water-year run
-          with that limiter has not yet replaced this archived figure set.
+          All figures, animations, statistics, and downloadable tables on this
+          page were generated from the full 2010-10-01 to 2024-09-30 paired run
+          completed on 2026-08-22 with the current routed-volume-limited method.
         </p>
       </aside>
 
@@ -162,6 +165,8 @@
             <h3>4. Stream and reach accounting</h3>
             <p>
               D8 drainage area defines internal stream cells and a single outlet.
+              At each adaptive substep, losing-stream exchange cannot exceed the
+              stream water available from upstream inflow and local generation.
               The stream network is divided into maximal chains between
               headwaters, confluences, and the outlet. Every active aquifer cell
               is assigned to its first downstream reach. Daily files retain both
@@ -185,33 +190,53 @@
 
       <section class="results" aria-labelledby="results-title">
         <div class="section-heading">
-          <p class="section-label">Archived result set</p>
+          <p class="section-label">Current result set</p>
           <h2 id="results-title">Full-period paired-run diagnostics</h2>
           <p>
-            These values belong to the archived unrestricted-boundary run shown
-            in the figures. They should not be treated as current calibrated
-            estimates or transferred to the standard limited-boundary method.
+            These values summarize the same current-method run shown in the
+            figures and provided in the downloads below. They are model results,
+            not calibrated estimates.
           </p>
         </div>
         <table class="results-table">
           <thead><tr><th>Quantity, 2010-10-01 to 2024-09-30</th><th>Modeled value</th></tr></thead>
           <tbody>
-            <tr><td>Scheduled and applied pumping</td><td>3,350,643 m³</td></tr>
-            <tr><td>Cumulative streamflow depletion</td><td>3,290,227 m³</td></tr>
-            <tr><td>End-of-run aquifer-storage depletion</td><td>60,416 m³</td></tr>
-            <tr><td>Depletion as a fraction of scheduled pumping</td><td>98.20%</td></tr>
-            <tr><td>Maximum mapped head difference, 2024-09-30</td><td>2.17 m</td></tr>
-            <tr><td>Maximum absolute daily paired water-balance error</td><td>5.82 × 10<sup>−11</sup> m³</td></tr>
+            <tr><td>Scheduled pumping</td><td>3,350,643 m³</td></tr>
+            <tr><td>Modeled extraction</td><td>3,350,607 m³</td></tr>
+            <tr><td>Cumulative streamflow depletion</td><td>3,287,289 m³</td></tr>
+            <tr><td>End-of-run aquifer-storage depletion</td><td>63,318 m³</td></tr>
+            <tr><td>Depletion as a fraction of modeled extraction</td><td>98.11%</td></tr>
+            <tr><td>Maximum mapped head difference, 2024-09-30</td><td>1.002 m</td></tr>
+            <tr><td>Maximum daily streamflow depletion</td><td>9,761 m³ d<sup>−1</sup></td></tr>
           </tbody>
         </table>
         <p class="results-footnote">
-          In the WY2020–2021 acceptance test, the current stream-availability
-          limiter produced nonnegative routed flow for all 27,047 reach-days.
-          Flow depletion was 72.60% of modeled pumping, compared with 92.15% for
-          the unrestricted boundary over the same period. This sensitivity is a
-          principal reason not to interpret the archived full-period values as a
-          final estimate.
+          Cumulative depletion is calculated from the daily outlet comparison;
+          aquifer-storage depletion is the paired storage difference on the final
+          day. Maximum daily depletion occurred on 2023-01-08.
         </p>
+      </section>
+
+      <section id="animations" class="animations" aria-labelledby="animations-title">
+        <div class="section-heading">
+          <p class="section-label">Reach animations</p>
+          <h2 id="animations-title">Trailing 30-day routed depletion fraction</h2>
+          <p>Weekly frames show the fraction of upstream-integrated unimpaired flow depleted along each network link. The displayed water years span contrasting recharge conditions.</p>
+        </div>
+        <div class="video-grid">
+          <figure>
+            <video controls preload="metadata" playsinline>
+              <source src="assets/reach_routed_depletion_fraction_wy2017.mp4" type="video/mp4">
+            </video>
+            <figcaption><b>Water year 2017</b><span>Selected wet-year example</span></figcaption>
+          </figure>
+          <figure>
+            <video controls preload="metadata" playsinline>
+              <source src="assets/reach_routed_depletion_fraction_wy2021.mp4" type="video/mp4">
+            </video>
+            <figcaption><b>Water year 2021</b><span>Selected dry-year example</span></figcaption>
+          </figure>
+        </div>
       </section>
 
       <section id="outputs" class="outputs">
@@ -222,26 +247,36 @@
         <div class="output-columns">
           <section>
             <h3>Basin time series</h3>
-            <p><code>streamflow_depletion_*.csv</code></p>
-            <p>Daily unimpaired and pumped flow, depletion, recharge, storage change, pumping diagnostics, and paired water-balance terms.</p>
+            <p><a href="data/streamflow_depletion_2010-10-01_to_2024-09-30.csv" download><code>streamflow_depletion_2010-10-01_to_2024-09-30.csv</code></a> · 2.9 MB</p>
+            <p>Collaborator-facing daily outlet table with unimpaired and pumped (impaired) flow, depletion, response fractions, pumping, and cumulative fields.</p>
           </section>
           <section>
             <h3>Reach time series</h3>
-            <p><code>reach_daily.parquet</code></p>
-            <p>Daily local and upstream-routed unimpaired flow, pumped flow, depletion volume, and depletion fraction for each reach.</p>
+            <p><a href="data/reach_daily.parquet" download><code>reach_daily.parquet</code></a> · 13.8 MB</p>
+            <p>199,446 rows of daily local and upstream-routed unimpaired flow, pumped flow, depletion volume, and depletion fraction for 39 reaches.</p>
           </section>
           <section>
             <h3>Network geometry</h3>
-            <p><code>reaches.gpkg</code></p>
+            <p><a href="data/reaches.gpkg" download><code>reaches.gpkg</code></a> · 119 kB</p>
             <p>Reach lines, connectivity, outlet flag, length, incremental and upstream area, and run-period summary fields.</p>
           </section>
           <section>
-            <h3>Reproducibility record</h3>
-            <p><code>simulation_metadata_*.json</code></p>
-            <p>Input paths and hashes, configuration, grid and solver settings, initial conditions, dates, output schemas, and numerical checks.</p>
+            <h3>Dry-season summaries</h3>
+            <p><a href="data/basin_dry_season_metrics_by_year.csv" download>Basin by year</a> · <a href="data/reach_dry_season_metrics_by_year.csv" download>Reach by year</a> · <a href="data/reach_dry_season_summary.csv" download>Reach summary</a></p>
+            <p>June–October flow and depletion metrics, including complete-season ranks and low-flow counts.</p>
+          </section>
+          <section>
+            <h3>Simulation record</h3>
+            <p><a href="data/simulation_metadata_2010-10-01_to_2024-09-30.json"><code>simulation_metadata_*.json</code></a> · <a href="data/preflight.json"><code>preflight.json</code></a></p>
+            <p>Input hashes, configuration, grid and solver settings, initial conditions, dates, output schemas, and checks.</p>
+          </section>
+          <section>
+            <h3>Visualization metadata</h3>
+            <p><a href="data/reach_visualization_metadata.json"><code>reach_visualization_metadata.json</code></a> · <a href="data/dry_season_metrics_metadata.json"><code>dry_season_metrics_metadata.json</code></a></p>
+            <p>Definitions, selected animation years, display parameters, and hashes for the reach and seasonal products.</p>
           </section>
         </div>
-        <p class="schema-link"><a href="REACH_OUTPUTS.md">Detailed reach definitions and invariants</a></p>
+        <p class="schema-link"><a href="https://github.com/daviddralle/gw_simulator/tree/main/docs/data">Download manifest</a> · <a href="REACH_OUTPUTS.md">Detailed reach definitions and invariants</a></p>
       </section>
 
       <section id="limitations" class="limitations">
@@ -253,7 +288,7 @@
           <li>The model has not been calibrated to observed streamflow or groundwater levels.</li>
           <li>Recharge is spatially uniform and depends on a simplified climatic storage-deficit calculation.</li>
           <li>Continental hydrogeologic rasters are screening inputs; their local accuracy and source provenance remain uncertain.</li>
-          <li>Streams are represented as fixed-stage cells without channel travel time, channel storage, or downstream reinfiltration.</li>
+          <li>Streams are represented as fixed-stage cells; routed-volume limiting constrains losing exchange by available water, but channel travel time, storage, and downstream reinfiltration are not simulated.</li>
           <li>Pumping is represented by a repeated monthly climatology and topographic source zones rather than screened well intervals and a three-dimensional aquifer.</li>
           <li>Reach values describe where modeled flow changes are received; they do not attribute a reach response to a particular well.</li>
         </ul>

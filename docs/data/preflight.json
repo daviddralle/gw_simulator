@@ -1,0 +1,103 @@
+{
+  "created_utc": "2026-08-22T05:07:41.987640+00:00",
+  "workflow_name": "green_valley_continental_v22a_climatology_wy2011_2024",
+  "config": "/Users/daviddralle/Projects/boussinesq-pumping/configs/green_valley.yml",
+  "boundary": {
+    "path": "/Users/daviddralle/Projects/boussinesq-pumping/data/comid_8273277.gpkg",
+    "fingerprint_sha256": "d507e1a2a998c325289bc09efcc718a7ef8593d89d111f59e75a0b1a2621bfaf",
+    "area_km2": 15.836242643989337
+  },
+  "grid": {
+    "target_crs": "EPSG:26910",
+    "target_resolution_m": 50.0,
+    "estimated_shape": [
+      109,
+      112
+    ],
+    "estimated_node_count": 12208,
+    "rectangle_area_km2": 30.52,
+    "rectangle_to_basin_area_ratio": 1.927224827638259,
+    "estimated_working_memory_gb": 0.028423964977264404
+  },
+  "simulation": {
+    "start_date": "2010-10-01",
+    "end_date": "2024-09-30",
+    "day_count": 5114,
+    "scenario_count": 2,
+    "snapshot_dates": [
+      "2019-09-30",
+      "2024-09-30"
+    ],
+    "estimated_snapshot_storage_gb": 0.0003638267517089844
+  },
+  "forcing": {
+    "path": "/Users/daviddralle/Projects/boussinesq-pumping/runs/green_valley/glhymps2_pelletier_v22a_climatology_wy2011_2024/inputs/recharge.csv",
+    "first_date": "2000-03-05",
+    "last_date": "2024-12-31",
+    "record_count": 9068,
+    "duplicate_date_count": 0,
+    "invalid_record_count": 0,
+    "negative_recharge_count": 0,
+    "requested_first_date": "2008-10-01",
+    "requested_last_date": "2024-09-30",
+    "missing_requested_day_count": 0,
+    "missing_requested_day_examples": []
+  },
+  "rasters": {
+    "dem": {
+      "path": "/Users/daviddralle/Projects/boussinesq-pumping/data/derived/green_valley/dem_3dep_10m.tif",
+      "covers_boundary_bbox": true,
+      "crs": "EPSG:4269",
+      "shape": [
+        551,
+        717
+      ],
+      "resolution": [
+        8.983152841195215e-05,
+        8.983152841195215e-05
+      ]
+    },
+    "transmissivity": {
+      "path": "/Users/daviddralle/Projects/boussinesq-pumping/data/hydrogeology/continental/transmissivity_continental_m2day.tif",
+      "covers_boundary_bbox": true,
+      "crs": "EPSG:5070",
+      "shape": [
+        3229,
+        2690
+      ],
+      "resolution": [
+        29.99999736303699,
+        29.999997363036922
+      ]
+    },
+    "depth_to_bedrock": {
+      "path": "/Users/daviddralle/Projects/boussinesq-pumping/data/hydrogeology/continental/depth_to_bedrock_continental_m.tif",
+      "covers_boundary_bbox": true,
+      "crs": "EPSG:5070",
+      "shape": [
+        3229,
+        2690
+      ],
+      "resolution": [
+        30.0,
+        30.0
+      ]
+    },
+    "porosity": {
+      "path": "/Users/daviddralle/Projects/boussinesq-pumping/data/hydrogeology/continental/specific_yield_continental.tif",
+      "covers_boundary_bbox": true,
+      "crs": "EPSG:5070",
+      "shape": [
+        3229,
+        2690
+      ],
+      "resolution": [
+        30.0,
+        30.0
+      ]
+    }
+  },
+  "warnings": [],
+  "errors": [],
+  "ready": true
+}
