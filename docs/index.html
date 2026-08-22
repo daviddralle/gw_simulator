@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="gw_simulator models catchment-scale groundwater flow and streamflow depletion, from reproducible inputs to outlet and reach-by-reach results.">
+  <title>gw_simulator · Groundwater depletion, reach by reach</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./" aria-label="gw_simulator home">
+      <span class="wordmark-mark" aria-hidden="true"></span>
+      <span>gw_simulator</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#workflow">Workflow</a>
+      <a href="#outputs">Outputs</a>
+      <a href="demo/green_valley_example.html">Demo</a>
+      <a href="https://github.com/daviddralle/gw_simulator">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Catchment-scale groundwater modeling</p>
+        <h1>From watershed boundary to reach-by-reach depletion.</h1>
+        <p class="lede">
+          A reproducible Python workflow for paired unimpaired and pumped
+          groundwater simulations using Landlab’s Dupuit–Boussinesq component.
+          Build the forcing, validate the domain, run the model, and trace the
+          response through the stream network.
+        </p>
+        <div class="actions">
+          <a class="button button-primary" href="demo/green_valley_example.html">Open the example explorer</a>
+          <a class="button button-secondary" href="https://github.com/daviddralle/gw_simulator#reproducible-workflow">Run it from the CLI</a>
+        </div>
+        <p class="hero-note">Small Green Valley subwatershed · water years 2011–2024 · screening model, not a calibrated forecast</p>
+      </div>
+      <figure class="hero-figure">
+        <div class="figure-bar">
+          <span></span><span></span><span></span>
+          <b>reach_depletion_summary.png</b>
+        </div>
+        <img src="assets/reach_depletion_summary.png" alt="Four maps of the Green Valley stream network showing local and routed flow-depletion volume and fraction" fetchpriority="high">
+      </figure>
+    </section>
+
+    <section class="facts" aria-label="Example simulation facts">
+      <div><strong>15.8 km²</strong><span>modeled aquifer area</span></div>
+      <div><strong>37</strong><span>stream reaches</span></div>
+      <div><strong>5,114</strong><span>paired daily steps</span></div>
+      <div><strong>189k</strong><span>reach-day records</span></div>
+    </section>
+
+    <section class="section intro" id="workflow">
+      <div class="section-heading">
+        <p class="eyebrow">The product is the workflow</p>
+        <h2>CLI first, with a configuration you can audit.</h2>
+        <p>
+          The inputs are too consequential for a file-picker to hide them. A
+          versioned YAML file keeps spatial data, dates, hydrogeology, pumping,
+          numerical settings, and requested outputs together. Preflight checks
+          fail early—before an expensive simulation begins.
+        </p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <span>01</span>
+          <div><h3>Describe the site</h3><p>Choose a boundary, DEM, hydrogeologic rasters, dates, recharge source, and optional wells and pumping schedule.</p></div>
+        </li>
+        <li>
+          <span>02</span>
+          <div><h3>Prepare and preflight</h3><p>Align inputs, build forcing, identify streams and the outlet, and verify coverage, topology, storage, and run scale.</p></div>
+        </li>
+        <li>
+          <span>03</span>
+          <div><h3>Simulate paired branches</h3><p>Spin up once, then compare otherwise identical unimpaired and pumped groundwater states with daily water-balance checks.</p></div>
+        </li>
+        <li>
+          <span>04</span>
+          <div><h3>Inspect the response</h3><p>Export the outlet time series, spatial reach tables, maps, cross-sections, animations, and a complete reproducibility record.</p></div>
+        </li>
+      </ol>
+
+      <div class="command-panel" aria-label="Example command">
+        <div class="command-label"><span>Production entry point</span><b>shell</b></div>
+        <pre><code>python scripts/run_workflow.py \
+  --config configs/green_valley.yml \
+  --stage all</code></pre>
+        <p>Stages can be resumed independently: <code>dem</code>, <code>hydrogeology</code>, <code>recharge</code>, <code>preflight</code>, <code>groundwater</code>, and <code>plots</code>.</p>
+      </div>
+    </section>
+
+    <section class="section inputs">
+      <div class="section-heading compact">
+        <p class="eyebrow">Inputs</p>
+        <h2>Geospatial layers in, explicit assumptions throughout.</h2>
+      </div>
+      <div class="input-grid">
+        <article><span>01</span><h3>Boundary</h3><p>GeoPackage, Shapefile, GeoJSON, KML, or another GeoPandas-readable polygon.</p></article>
+        <article><span>02</span><h3>Topography</h3><p>A DEM for the active grid, drainage network, stream cells, and model elevations.</p></article>
+        <article><span>03</span><h3>Hydrogeology</h3><p>Transmissivity, depth to bedrock, and specific yield supplied as named raster inputs.</p></article>
+        <article><span>04</span><h3>Forcing</h3><p>Daily recharge from prepared data or the PML evapotranspiration plus PRISM precipitation workflow.</p></article>
+        <article><span>05</span><h3>Pumping</h3><p>Optional mapped well locations and calendar-month or dated extraction schedules.</p></article>
+      </div>
+    </section>
+
+    <section class="section outputs" id="outputs">
+      <div class="section-heading">
+        <p class="eyebrow">Actual outputs</p>
+        <h2>One basin result. A whole network of context.</h2>
+        <p>
+          Outlet depletion remains available as a familiar daily CSV. The
+          distributed products add compact Parquet time series and joinable
+          GeoPackage geometry for every reach, with local and upstream-routed
+          accounting kept distinct.
+        </p>
+      </div>
+
+      <div class="output-grid">
+        <figure class="output-card output-wide">
+          <img src="assets/hydrographs.png" alt="Green Valley hydrographs comparing unimpaired and pumped streamflow with recharge" loading="lazy">
+          <figcaption><b>Outlet hydrographs</b><span>Natural and pumped flow, recharge, and depletion through time.</span></figcaption>
+        </figure>
+        <figure class="output-card">
+          <img src="assets/cross_section.png" alt="Groundwater cross-section showing topography, aquifer base, and unimpaired and pumped water tables" loading="lazy">
+          <figcaption><b>Groundwater cross-sections</b><span>Selected-date aquifer geometry and water-table differences.</span></figcaption>
+        </figure>
+        <article class="file-card">
+          <p class="eyebrow">Machine-readable</p>
+          <h3>Outputs built for analysis</h3>
+          <ul>
+            <li><code>streamflow_depletion_*.csv</code><span>Daily basin-outlet result</span></li>
+            <li><code>reach_daily.parquet</code><span>Local and routed daily reach values</span></li>
+            <li><code>reaches.gpkg</code><span>Network geometry and summaries</span></li>
+            <li><code>simulation_metadata_*.json</code><span>Inputs, hashes, settings, and checks</span></li>
+          </ul>
+          <a href="REACH_OUTPUTS.md">Read the reach-output definitions →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="demo-callout">
+      <div>
+        <p class="eyebrow">Explore a completed run</p>
+        <h2>A digestible Green Valley example</h2>
+        <p>
+          Step through the prepared grid, paired outlet hydrographs, pumping
+          response, depletion through time, reach-by-reach maps, and a model
+          cross-section. The explorer is static and self-contained—no server
+          or model rerun required.
+        </p>
+      </div>
+      <a class="button button-light" href="demo/green_valley_example.html">Explore the small run</a>
+    </section>
+
+    <section class="section decision">
+      <p class="eyebrow">Where a GUI could help</p>
+      <h2>A config builder—not a second modeling application.</h2>
+      <p>
+        If a graphical layer becomes worthwhile, the maintainable version is a
+        small local wizard that selects files, validates required fields and
+        coordinate systems, writes the YAML, runs preflight, and then hands off
+        to the same CLI. The solver, provenance, and acceptance checks should
+        remain in one code path.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div><b>gw_simulator</b><span>Catchment-scale groundwater and streamflow-depletion screening.</span></div>
+    <div class="footer-links">
+      <a href="https://github.com/daviddralle/gw_simulator">Source</a>
+      <a href="https://github.com/daviddralle/gw_simulator/issues">Issues</a>
+      <a href="REACH_OUTPUTS.md">Reach schema</a>
+    </div>
+  </footer>
+</body>
+</html>
