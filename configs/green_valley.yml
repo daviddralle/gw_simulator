@@ -1,0 +1,81 @@
+version: 1
+name: green_valley_continental_v22a_climatology_wy2011_2024
+root: ..
+
+boundary: data/comid_8273277.gpkg
+dem: data/derived/green_valley/dem_3dep_10m.tif
+recharge_csv: runs/green_valley/glhymps2_pelletier_v22a_climatology_wy2011_2024/inputs/recharge.csv
+forcing_cache: data/forcing/green_valley/pml_v22a_prism
+
+glhymps_zip: data/external/glhymps2/GLHYMPS.zip
+hydrogeology_output_dir: data/derived/green_valley/glhymps2
+shangguan_depth_source: data/external/soilgrids2017/clips/green_valley/BDTICM_M_250m_to_50m_cm.tif
+pelletier_regolith: data/external/pelletier2016/upland_hill-slope_regolith_thickness.tif
+pelletier_sediment: data/external/pelletier2016/upland_valley-bottom_and_lowland_sedimentary_deposit_thickness.tif
+pelletier_land_cover: data/external/pelletier2016/land_cover_mask.tif
+# Current starting dataset: the continental S/T/depth set. These files are
+# byte-identical to the former data/GLYMPHS inputs, now labeled explicitly.
+transmissivity: data/hydrogeology/continental/transmissivity_continental_m2day.tif
+depth_to_bedrock: data/hydrogeology/continental/depth_to_bedrock_continental_m.tif
+porosity: data/hydrogeology/continental/specific_yield_continental.tif
+
+legacy_transmissivity: data/GLYMPHS/transmissivity_m2d.tif
+legacy_depth_to_bedrock: data/GLYMPHS/depthToBedrock_m.tif
+legacy_porosity: data/GLYMPHS/storativity.tif
+
+wells: data/well_locations.gpkg
+pumping_schedule: data/GVDB/pumpingSchedule.csv
+output_dir: runs/green_valley/continental_v22a_climatology_wy2011_2024/groundwater
+
+earth_engine:
+  project: ee-daviddralle
+
+dem_extraction:
+  scale_m: 10.0
+
+recharge:
+  start_year: 2000
+  end_year: 2024
+  initial_deficit_mm: 0.0
+
+groundwater:
+  start_date: 2010-10-01
+  end_date: 2024-09-30
+  target_crs: EPSG:26910
+  target_resolution_m: 50.0
+  stream_area_threshold_m2: 250000.0
+  courant_coefficient: 0.5
+  stream_drain_offset_m: 0.0
+  additional_aquifer_depth_m: 0.0
+  deep_aquifer_hydraulics: preserve_transmissivity
+  specific_yield_floor: 0.0
+  stream_loss_mode: routed_volume_limited
+  stream_limiter_tolerance_m3: 1.0e-6
+  stream_limiter_max_iterations: 25
+
+spinup:
+  start_date: 2008-10-01
+  end_date: 2010-09-30
+  pumping: false
+  initial_condition: base
+
+pumping:
+  enabled: true
+  mode: climatology
+  source_mode: topographic
+  source_area_threshold_m2: 500000.0
+  source_zone_storage_fraction: 0.5
+  pumping_storage_fraction: 0.5
+  strict_supply: false
+
+outputs:
+  snapshot_dates:
+    - 2019-09-30
+    - 2024-09-30
+  cross_section_dates:
+    - 2019-09-30
+    - 2024-09-30
+
+limits:
+  warn_node_count: 2000000
+  warn_memory_gb: 8.0

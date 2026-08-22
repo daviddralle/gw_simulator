@@ -1,0 +1,27 @@
+name: boussinesq-pumping
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - earthengine-api
+  - ffmpeg
+  - fiona
+  - geemap
+  - geopandas
+  - landlab
+  - matplotlib
+  - numpy
+  - pandas
+  - pip
+  - pyarrow
+  - pyogrio
+  - pyproj
+  - pytest
+  - pyyaml
+  - rasterio
+  - reportlab
+  - rioxarray
+  - scipy
+  - shapely
+  - tqdm
+  - xarray

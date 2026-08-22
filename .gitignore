@@ -1,8 +1,10 @@
 data/
 /outputs/
+/runs/
 .DS_Store
 __pycache__/
 *.pyc
+*.egg-info/
 .ipynb_checkpoints/
 misc/
 CEFF_GV.code-workspace

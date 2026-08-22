@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boussinesq-pumping"
+version = "0.1.0"
+description = "Catchment-scale Dupuit-Boussinesq groundwater pumping and streamflow-depletion workflow"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fiona",
+  "geopandas",
+  "landlab",
+  "matplotlib",
+  "numpy",
+  "pandas",
+  "pyarrow",
+  "pyogrio",
+  "pyproj",
+  "pyyaml",
+  "rasterio",
+  "rioxarray",
+  "scipy",
+  "shapely",
+  "tqdm",
+  "xarray",
+]
+
+[project.optional-dependencies]
+earth-engine = ["earthengine-api", "geemap"]
+reports = ["reportlab"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["gw_simulator*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

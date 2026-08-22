@@ -1,0 +1,52 @@
+version: 1
+name: green_valley_continental_stream_limited_wy2020_2021
+root: ..
+
+boundary: data/comid_8273277.gpkg
+dem: examples/green_valley/outputs/dem.tif
+recharge_csv: runs/green_valley/glhymps2_pelletier_v22a_climatology_wy2011_2024/inputs/recharge.csv
+transmissivity: data/hydrogeology/continental/transmissivity_continental_m2day.tif
+depth_to_bedrock: data/hydrogeology/continental/depth_to_bedrock_continental_m.tif
+porosity: data/hydrogeology/continental/specific_yield_continental.tif
+
+wells: data/well_locations.gpkg
+pumping_schedule: data/GVDB/pumpingSchedule.csv
+output_dir: runs/green_valley/continental_stream_limited_wy2020_2021/groundwater
+initial_heads: runs/green_valley/continental_v22a_climatology_wy2011_2024/groundwater/wt_unimpaired_2019-09-30.npy
+pumped_initial_heads: runs/green_valley/continental_v22a_climatology_wy2011_2024/groundwater/wt_pumped_2019-09-30.npy
+
+groundwater:
+  start_date: 2019-10-01
+  end_date: 2021-09-30
+  target_crs: EPSG:26910
+  target_resolution_m: 50.0
+  stream_area_threshold_m2: 250000.0
+  courant_coefficient: 0.5
+  stream_drain_offset_m: 0.0
+  additional_aquifer_depth_m: 0.0
+  deep_aquifer_hydraulics: preserve_transmissivity
+  specific_yield_floor: 0.0
+  stream_loss_mode: routed_volume_limited
+  stream_limiter_tolerance_m3: 1.0e-6
+  stream_limiter_max_iterations: 25
+
+pumping:
+  enabled: true
+  mode: climatology
+  source_mode: topographic
+  source_area_threshold_m2: 500000.0
+  source_zone_storage_fraction: 0.5
+  pumping_storage_fraction: 0.5
+  strict_supply: false
+
+outputs:
+  snapshot_dates:
+    - 2021-09-30
+  cross_section_dates:
+    - 2021-09-30
+  reach_video_water_years:
+    - 2021
+
+limits:
+  warn_node_count: 2000000
+  warn_memory_gb: 8.0

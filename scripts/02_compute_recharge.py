@@ -18,6 +18,17 @@ def main() -> None:
     parser.add_argument("--end-year", default=2024, type=int)
     parser.add_argument("--initial-deficit-mm", default=0.0, type=float)
     parser.add_argument("--ee-project", default=None)
+    parser.add_argument(
+        "--cache-dir",
+        type=Path,
+        default=None,
+        help="Cache raw PML/PRISM chunks here so interrupted and repeated runs resume.",
+    )
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="Ignore cached Earth Engine chunks and fetch them again.",
+    )
     args = parser.parse_args()
 
     output = build_recharge_csv(
@@ -27,6 +38,8 @@ def main() -> None:
         end_year=args.end_year,
         initial_deficit_mm=args.initial_deficit_mm,
         ee_project=args.ee_project,
+        cache_dir=args.cache_dir,
+        refresh=args.refresh,
     )
     print(f"Recharge CSV saved to {output}")
 
