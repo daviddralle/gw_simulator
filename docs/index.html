@@ -3,180 +3,263 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="gw_simulator models catchment-scale groundwater flow and streamflow depletion, from reproducible inputs to outlet and reach-by-reach results.">
-  <title>gw_simulator · Groundwater depletion, reach by reach</title>
+  <meta name="description" content="Methods, provisional results, limitations, and data products from a groundwater and streamflow-depletion screening model for the Green Valley subwatershed, California.">
+  <title>Green Valley groundwater and streamflow-depletion model</title>
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="wordmark" href="./" aria-label="gw_simulator home">
-      <span class="wordmark-mark" aria-hidden="true"></span>
-      <span>gw_simulator</span>
-    </a>
+    <a class="wordmark" href="./">Green Valley groundwater model</a>
     <nav aria-label="Primary navigation">
-      <a href="#workflow">Workflow</a>
+      <a href="#methods">Methods</a>
+      <a href="#figures">Figures</a>
       <a href="#outputs">Outputs</a>
-      <a href="demo/green_valley_example.html">Demo</a>
-      <a href="https://github.com/daviddralle/gw_simulator">GitHub</a>
+      <a href="#limitations">Limitations</a>
+      <a href="https://github.com/daviddralle/gw_simulator">Code</a>
     </nav>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">Catchment-scale groundwater modeling</p>
-        <h1>From watershed boundary to reach-by-reach depletion.</h1>
-        <p class="lede">
-          A reproducible Python workflow for paired unimpaired and pumped
-          groundwater simulations using Landlab’s Dupuit–Boussinesq component.
-          Build the forcing, validate the domain, run the model, and trace the
-          response through the stream network.
-        </p>
-        <div class="actions">
-          <a class="button button-primary" href="demo/green_valley_example.html">Open the example explorer</a>
-          <a class="button button-secondary" href="https://github.com/daviddralle/gw_simulator#reproducible-workflow">Run it from the CLI</a>
-        </div>
-        <p class="hero-note">Small Green Valley subwatershed · water years 2011–2024 · screening model, not a calibrated forecast</p>
-      </div>
-      <figure class="hero-figure">
-        <div class="figure-bar">
-          <span></span><span></span><span></span>
-          <b>reach_depletion_summary.png</b>
-        </div>
-        <img src="assets/reach_depletion_summary.png" alt="Four maps of the Green Valley stream network showing local and routed flow-depletion volume and fraction" fetchpriority="high">
-      </figure>
-    </section>
+  <main class="report">
+    <article>
+      <header class="report-header">
+        <p class="section-label">Groundwater–surface-water modeling · Sonoma County, California</p>
+        <h1>Groundwater pumping and modeled streamflow depletion in the Green Valley subwatershed</h1>
+        <p class="subtitle">A spatially distributed Dupuit–Boussinesq screening analysis for water years 2011–2024</p>
+        <dl class="report-meta">
+          <div><dt>Model period</dt><dd>2010-10-01 to 2024-09-30</dd></div>
+          <div><dt>Spatial resolution</dt><dd>50 m</dd></div>
+          <div><dt>Scenarios</dt><dd>Unimpaired and pumped</dd></div>
+          <div><dt>Status</dt><dd>Screening model; uncalibrated</dd></div>
+        </dl>
+      </header>
 
-    <section class="facts" aria-label="Example simulation facts">
-      <div><strong>15.8 km²</strong><span>modeled aquifer area</span></div>
-      <div><strong>37</strong><span>stream reaches</span></div>
-      <div><strong>5,114</strong><span>paired daily steps</span></div>
-      <div><strong>189k</strong><span>reach-day records</span></div>
-    </section>
-
-    <section class="section intro" id="workflow">
-      <div class="section-heading">
-        <p class="eyebrow">The product is the workflow</p>
-        <h2>CLI first, with a configuration you can audit.</h2>
+      <section class="abstract" aria-labelledby="abstract-title">
+        <h2 id="abstract-title">Abstract</h2>
         <p>
-          The inputs are too consequential for a file-picker to hide them. A
-          versioned YAML file keeps spatial data, dates, hydrogeology, pumping,
-          numerical settings, and requested outputs together. Preflight checks
-          fail early—before an expensive simulation begins.
+          This study estimates daily groundwater contributions to streamflow and
+          the change in modeled streamflow associated with mapped groundwater
+          pumping in the Green Valley subwatershed. The analysis compares two
+          branches with identical recharge, hydrogeology, initial heads, and
+          numerical settings: an unimpaired branch without extraction and a
+          pumped branch with a repeated monthly pumping schedule. Results are
+          reported at the basin outlet and for individual stream reaches.
         </p>
-      </div>
+        <p>
+          The model is intended for screening and method development. It has not
+          been calibrated to observed discharge or groundwater levels, and the
+          magnitude and timing of simulated depletion remain conditional on
+          uncertain hydrogeologic inputs and simplified stream representation.
+        </p>
+      </section>
 
-      <ol class="steps">
-        <li>
-          <span>01</span>
-          <div><h3>Describe the site</h3><p>Choose a boundary, DEM, hydrogeologic rasters, dates, recharge source, and optional wells and pumping schedule.</p></div>
-        </li>
-        <li>
-          <span>02</span>
-          <div><h3>Prepare and preflight</h3><p>Align inputs, build forcing, identify streams and the outlet, and verify coverage, topology, storage, and run scale.</p></div>
-        </li>
-        <li>
-          <span>03</span>
-          <div><h3>Simulate paired branches</h3><p>Spin up once, then compare otherwise identical unimpaired and pumped groundwater states with daily water-balance checks.</p></div>
-        </li>
-        <li>
-          <span>04</span>
-          <div><h3>Inspect the response</h3><p>Export the outlet time series, spatial reach tables, maps, cross-sections, animations, and a complete reproducibility record.</p></div>
-        </li>
-      </ol>
+      <section class="study-summary" aria-labelledby="summary-title">
+        <h2 id="summary-title">Study configuration</h2>
+        <div class="summary-table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">Modeled aquifer area</th><td>15.836 km²</td><th scope="row">Raster grid</th><td>50 m, UTM zone 10N</td></tr>
+              <tr><th scope="row">Stream network</th><td>37 reaches</td><th scope="row">Stream threshold</th><td>0.25 km² contributing area</td></tr>
+              <tr><th scope="row">Main simulation</th><td>5,114 daily steps</td><th scope="row">Transient spin-up</th><td>2008-10-01 to 2010-09-30</td></tr>
+              <tr><th scope="row">Reach time series</th><td>189,218 reach-days</td><th scope="row">Streamflow definition</th><td>Groundwater exchange + saturation excess</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="command-panel" aria-label="Example command">
-        <div class="command-label"><span>Production entry point</span><b>shell</b></div>
+      <figure class="primary-figure" id="figures">
+        <a href="demo/green_valley_example.html">
+          <img src="assets/reach_depletion_summary.png" alt="Four maps of the Green Valley stream network showing local and routed streamflow-depletion volume and fraction">
+        </a>
+        <figcaption>
+          <b>Figure 1.</b> Reach-scale model output from the archived full-period
+          run: cumulative local and upstream-routed depletion volumes and routed
+          depletion fractions for the full period and June–October. Local values
+          describe exchange within an incremental reach catchment; routed values
+          include all connected upstream contributions.
+          <a href="demo/green_valley_example.html">View the complete figure set.</a>
+        </figcaption>
+      </figure>
+
+      <aside class="scientific-note" aria-label="Figure-set status">
+        <h2>Important status of the displayed figures</h2>
+        <p>
+          The full-period figures on this site document the earlier continental-
+          parameter run with an unrestricted two-way fixed-head stream boundary.
+          They are retained to show model behavior and output structure. The
+          current standard method limits losing-stream exchange to routed surface
+          water available at each adaptive substep. A complete 14-water-year run
+          with that limiter has not yet replaced this archived figure set.
+        </p>
+      </aside>
+
+      <section id="methods" class="methods">
+        <div class="section-heading">
+          <p class="section-label">Methods</p>
+          <h2>Model construction and paired comparison</h2>
+        </div>
+
+        <div class="method-list">
+          <section>
+            <h3>1. Domain and groundwater flow</h3>
+            <p>
+              The watershed boundary is represented on a 50 m raster grid. The
+              Landlab two-dimensional Dupuit–Boussinesq component simulates
+              saturated unconfined flow. Land surface is derived from a DEM;
+              aquifer base is land-surface elevation minus mapped aquifer
+              thickness. Hydraulic conductivity is inferred from transmissivity
+              divided by aquifer thickness, and mapped storativity is interpreted
+              as specific yield.
+            </p>
+          </section>
+          <section>
+            <h3>2. Recharge and initial conditions</h3>
+            <p>
+              Daily watershed-mean PRISM precipitation and PML V2.2a
+              evapotranspiration are combined with an unbounded climatic
+              storage-deficit calculation. Recharge is uniform over active model
+              cells. A two-year, unpumped transient spin-up provides the same
+              starting heads for both main branches.
+            </p>
+          </section>
+          <section>
+            <h3>3. Pumping representation</h3>
+            <p>
+              Mapped wells are associated with disjoint topographic source zones.
+              Monthly demand is repeated as a calendar-month climatology and
+              distributed among saturated cells according to transmissive
+              capacity. Extraction is limited by available drainable storage;
+              unmet demand is recorded rather than supplied from an assumed deep
+              source.
+            </p>
+          </section>
+          <section>
+            <h3>4. Stream and reach accounting</h3>
+            <p>
+              D8 drainage area defines internal stream cells and a single outlet.
+              The stream network is divided into maximal chains between
+              headwaters, confluences, and the outlet. Every active aquifer cell
+              is assigned to its first downstream reach. Daily files retain both
+              the local contribution associated with each reach and the routed
+              quantity passing through it from the entire upstream network.
+            </p>
+          </section>
+        </div>
+
+        <div class="equations" aria-label="Model accounting equations">
+          <div>
+            <span>Total modeled streamflow</span>
+            <code>Q = Q<sub>groundwater→stream</sub> + Q<sub>saturation excess</sub></code>
+          </div>
+          <div>
+            <span>Daily streamflow depletion</span>
+            <code>D = Q<sub>unimpaired</sub> − Q<sub>pumped</sub></code>
+          </div>
+        </div>
+      </section>
+
+      <section class="results" aria-labelledby="results-title">
+        <div class="section-heading">
+          <p class="section-label">Archived result set</p>
+          <h2 id="results-title">Full-period paired-run diagnostics</h2>
+          <p>
+            These values belong to the archived unrestricted-boundary run shown
+            in the figures. They should not be treated as current calibrated
+            estimates or transferred to the standard limited-boundary method.
+          </p>
+        </div>
+        <table class="results-table">
+          <thead><tr><th>Quantity, 2010-10-01 to 2024-09-30</th><th>Modeled value</th></tr></thead>
+          <tbody>
+            <tr><td>Scheduled and applied pumping</td><td>3,350,643 m³</td></tr>
+            <tr><td>Cumulative streamflow depletion</td><td>3,290,227 m³</td></tr>
+            <tr><td>End-of-run aquifer-storage depletion</td><td>60,416 m³</td></tr>
+            <tr><td>Depletion as a fraction of scheduled pumping</td><td>98.20%</td></tr>
+            <tr><td>Maximum mapped head difference, 2024-09-30</td><td>2.17 m</td></tr>
+            <tr><td>Maximum absolute daily paired water-balance error</td><td>5.82 × 10<sup>−11</sup> m³</td></tr>
+          </tbody>
+        </table>
+        <p class="results-footnote">
+          In the WY2020–2021 acceptance test, the current stream-availability
+          limiter produced nonnegative routed flow for all 27,047 reach-days.
+          Flow depletion was 72.60% of modeled pumping, compared with 92.15% for
+          the unrestricted boundary over the same period. This sensitivity is a
+          principal reason not to interpret the archived full-period values as a
+          final estimate.
+        </p>
+      </section>
+
+      <section id="outputs" class="outputs">
+        <div class="section-heading">
+          <p class="section-label">Model products</p>
+          <h2>Outlet, reach, spatial, and provenance files</h2>
+        </div>
+        <div class="output-columns">
+          <section>
+            <h3>Basin time series</h3>
+            <p><code>streamflow_depletion_*.csv</code></p>
+            <p>Daily unimpaired and pumped flow, depletion, recharge, storage change, pumping diagnostics, and paired water-balance terms.</p>
+          </section>
+          <section>
+            <h3>Reach time series</h3>
+            <p><code>reach_daily.parquet</code></p>
+            <p>Daily local and upstream-routed unimpaired flow, pumped flow, depletion volume, and depletion fraction for each reach.</p>
+          </section>
+          <section>
+            <h3>Network geometry</h3>
+            <p><code>reaches.gpkg</code></p>
+            <p>Reach lines, connectivity, outlet flag, length, incremental and upstream area, and run-period summary fields.</p>
+          </section>
+          <section>
+            <h3>Reproducibility record</h3>
+            <p><code>simulation_metadata_*.json</code></p>
+            <p>Input paths and hashes, configuration, grid and solver settings, initial conditions, dates, output schemas, and numerical checks.</p>
+          </section>
+        </div>
+        <p class="schema-link"><a href="REACH_OUTPUTS.md">Detailed reach definitions and invariants</a></p>
+      </section>
+
+      <section id="limitations" class="limitations">
+        <div class="section-heading">
+          <p class="section-label">Interpretation</p>
+          <h2>Principal limitations</h2>
+        </div>
+        <ul>
+          <li>The model has not been calibrated to observed streamflow or groundwater levels.</li>
+          <li>Recharge is spatially uniform and depends on a simplified climatic storage-deficit calculation.</li>
+          <li>Continental hydrogeologic rasters are screening inputs; their local accuracy and source provenance remain uncertain.</li>
+          <li>Streams are represented as fixed-stage cells without channel travel time, channel storage, or downstream reinfiltration.</li>
+          <li>Pumping is represented by a repeated monthly climatology and topographic source zones rather than screened well intervals and a three-dimensional aquifer.</li>
+          <li>Reach values describe where modeled flow changes are received; they do not attribute a reach response to a particular well.</li>
+        </ul>
+      </section>
+
+      <section class="reproducibility" aria-labelledby="repro-title">
+        <div>
+          <p class="section-label">Reproducibility</p>
+          <h2 id="repro-title">Configuration and source code</h2>
+          <p>
+            Model inputs, dates, hydrogeology, pumping assumptions, solver
+            settings, and requested outputs are recorded in a versioned YAML
+            configuration. The workflow performs preflight checks before the
+            groundwater simulation and writes file hashes and validation metrics
+            with each run.
+          </p>
+        </div>
         <pre><code>python scripts/run_workflow.py \
   --config configs/green_valley.yml \
   --stage all</code></pre>
-        <p>Stages can be resumed independently: <code>dem</code>, <code>hydrogeology</code>, <code>recharge</code>, <code>preflight</code>, <code>groundwater</code>, and <code>plots</code>.</p>
-      </div>
-    </section>
-
-    <section class="section inputs">
-      <div class="section-heading compact">
-        <p class="eyebrow">Inputs</p>
-        <h2>Geospatial layers in, explicit assumptions throughout.</h2>
-      </div>
-      <div class="input-grid">
-        <article><span>01</span><h3>Boundary</h3><p>GeoPackage, Shapefile, GeoJSON, KML, or another GeoPandas-readable polygon.</p></article>
-        <article><span>02</span><h3>Topography</h3><p>A DEM for the active grid, drainage network, stream cells, and model elevations.</p></article>
-        <article><span>03</span><h3>Hydrogeology</h3><p>Transmissivity, depth to bedrock, and specific yield supplied as named raster inputs.</p></article>
-        <article><span>04</span><h3>Forcing</h3><p>Daily recharge from prepared data or the PML evapotranspiration plus PRISM precipitation workflow.</p></article>
-        <article><span>05</span><h3>Pumping</h3><p>Optional mapped well locations and calendar-month or dated extraction schedules.</p></article>
-      </div>
-    </section>
-
-    <section class="section outputs" id="outputs">
-      <div class="section-heading">
-        <p class="eyebrow">Actual outputs</p>
-        <h2>One basin result. A whole network of context.</h2>
-        <p>
-          Outlet depletion remains available as a familiar daily CSV. The
-          distributed products add compact Parquet time series and joinable
-          GeoPackage geometry for every reach, with local and upstream-routed
-          accounting kept distinct.
-        </p>
-      </div>
-
-      <div class="output-grid">
-        <figure class="output-card output-wide">
-          <img src="assets/hydrographs.png" alt="Green Valley hydrographs comparing unimpaired and pumped streamflow with recharge" loading="lazy">
-          <figcaption><b>Outlet hydrographs</b><span>Natural and pumped flow, recharge, and depletion through time.</span></figcaption>
-        </figure>
-        <figure class="output-card">
-          <img src="assets/cross_section.png" alt="Groundwater cross-section showing topography, aquifer base, and unimpaired and pumped water tables" loading="lazy">
-          <figcaption><b>Groundwater cross-sections</b><span>Selected-date aquifer geometry and water-table differences.</span></figcaption>
-        </figure>
-        <article class="file-card">
-          <p class="eyebrow">Machine-readable</p>
-          <h3>Outputs built for analysis</h3>
-          <ul>
-            <li><code>streamflow_depletion_*.csv</code><span>Daily basin-outlet result</span></li>
-            <li><code>reach_daily.parquet</code><span>Local and routed daily reach values</span></li>
-            <li><code>reaches.gpkg</code><span>Network geometry and summaries</span></li>
-            <li><code>simulation_metadata_*.json</code><span>Inputs, hashes, settings, and checks</span></li>
-          </ul>
-          <a href="REACH_OUTPUTS.md">Read the reach-output definitions →</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="demo-callout">
-      <div>
-        <p class="eyebrow">Explore a completed run</p>
-        <h2>A digestible Green Valley example</h2>
-        <p>
-          Step through the prepared grid, paired outlet hydrographs, pumping
-          response, depletion through time, reach-by-reach maps, and a model
-          cross-section. The explorer is static and self-contained—no server
-          or model rerun required.
-        </p>
-      </div>
-      <a class="button button-light" href="demo/green_valley_example.html">Explore the small run</a>
-    </section>
-
-    <section class="section decision">
-      <p class="eyebrow">Where a GUI could help</p>
-      <h2>A config builder—not a second modeling application.</h2>
-      <p>
-        If a graphical layer becomes worthwhile, the maintainable version is a
-        small local wizard that selects files, validates required fields and
-        coordinate systems, writes the YAML, runs preflight, and then hands off
-        to the same CLI. The solver, provenance, and acceptance checks should
-        remain in one code path.
-      </p>
-    </section>
+        <div class="reference-links">
+          <a href="https://github.com/daviddralle/gw_simulator">Source repository</a>
+          <a href="https://github.com/daviddralle/gw_simulator#reproducible-workflow">Workflow documentation</a>
+          <a href="REACH_OUTPUTS.md">Reach-output definitions</a>
+        </div>
+      </section>
+    </article>
   </main>
 
   <footer>
-    <div><b>gw_simulator</b><span>Catchment-scale groundwater and streamflow-depletion screening.</span></div>
-    <div class="footer-links">
-      <a href="https://github.com/daviddralle/gw_simulator">Source</a>
-      <a href="https://github.com/daviddralle/gw_simulator/issues">Issues</a>
-      <a href="REACH_OUTPUTS.md">Reach schema</a>
-    </div>
+    <span>Green Valley groundwater and streamflow-depletion screening model</span>
+    <a href="https://github.com/daviddralle/gw_simulator">github.com/daviddralle/gw_simulator</a>
   </footer>
 </body>
 </html>

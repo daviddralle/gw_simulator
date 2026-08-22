@@ -3,139 +3,138 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore the setup and outputs from a completed 37-reach Green Valley gw_simulator run.">
-  <title>Green Valley example · gw_simulator</title>
+  <meta name="description" content="Figures from the archived full-period Green Valley groundwater and streamflow-depletion simulation.">
+  <title>Green Valley model figures</title>
   <link rel="stylesheet" href="../assets/site.css">
 </head>
-<body class="example-page">
+<body>
   <header class="site-header">
-    <a class="wordmark" href="../" aria-label="gw_simulator home">
-      <span class="wordmark-mark" aria-hidden="true"></span>
-      <span>gw_simulator</span>
-    </a>
-    <nav aria-label="Example navigation">
-      <a href="../#workflow">Workflow</a>
+    <a class="wordmark" href="../">Green Valley groundwater model</a>
+    <nav aria-label="Figure page navigation">
+      <a href="../#methods">Methods</a>
       <a href="../#outputs">Outputs</a>
-      <a href="https://github.com/daviddralle/gw_simulator">GitHub</a>
+      <a href="../#limitations">Limitations</a>
+      <a href="https://github.com/daviddralle/gw_simulator">Code</a>
     </nav>
   </header>
 
-  <main class="explorer-main">
-    <section class="explorer-intro">
-      <div>
-        <p class="eyebrow">Completed example · Green Valley, California</p>
-        <h1>One small watershed, from setup to reach response.</h1>
-      </div>
+  <main class="figure-report">
+    <header class="figure-report-header">
+      <p class="section-label">Supplementary figures</p>
+      <h1>Green Valley model setup and simulated response</h1>
       <p>
-        This 15.8 km² subwatershed keeps the example readable while exercising
-        the complete workflow: a prepared 50 m grid, daily recharge, paired
-        unimpaired and pumped simulations, outlet accounting, and results for
-        all 37 stream reaches. Use the views below to inspect the figures
-        produced by the CLI.
+        Figures from the 15.836 km², 37-reach simulation for water years
+        2011–2024. Select a figure name to change the displayed panel.
       </p>
-    </section>
+    </header>
 
-    <section class="example-facts" aria-label="Green Valley example facts">
-      <div><strong>15.8 km²</strong><span>active area</span></div>
-      <div><strong>37</strong><span>stream reaches</span></div>
-      <div><strong>50 m</strong><span>grid spacing</span></div>
-      <div><strong>2011–2024</strong><span>water years</span></div>
-    </section>
+    <aside class="scientific-note compact" aria-label="Figure-set status">
+      <h2>Archived run</h2>
+      <p>
+        These figures were generated with the earlier unrestricted two-way
+        fixed-head stream boundary. They show the model setup, paired comparison,
+        and output structure; they are not results from the current
+        stream-availability-limited standard method.
+      </p>
+    </aside>
+
+    <dl class="figure-metadata">
+      <div><dt>Period</dt><dd>2010-10-01 to 2024-09-30</dd></div>
+      <div><dt>Grid</dt><dd>50 m</dd></div>
+      <div><dt>Reach network</dt><dd>37 reaches</dd></div>
+      <div><dt>Scenarios</dt><dd>Unimpaired and pumped</dd></div>
+    </dl>
 
     <section class="viewer" aria-labelledby="viewer-title">
-      <div class="viewer-tabs" role="group" aria-label="Choose a result figure">
+      <div class="viewer-tabs" role="group" aria-label="Select a model figure">
         <button type="button" class="viewer-tab" aria-selected="true"
           data-src="../assets/grid_setup.png"
-          data-alt="Maps showing the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield"
-          data-kicker="01 · Prepare"
-          data-title="Grid and parameter setup"
-          data-copy="The domain, drainage network, modeled stream nodes, aquifer thickness, transmissivity, and specific yield are checked together before simulation.">
-          <span>01</span> Grid setup
+          data-alt="Maps of the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield"
+          data-number="Figure S1"
+          data-title="Model grid and hydraulic inputs"
+          data-copy="Topography and drainage, model boundaries and stream cells, initial saturated thickness, transmissivity, aquifer thickness, and specific yield for the 50 m grid.">
+          Grid and inputs
         </button>
         <button type="button" class="viewer-tab" aria-selected="false"
           data-src="../assets/hydrographs.png"
           data-alt="Daily Green Valley hydrographs comparing unimpaired and pumped streamflow, recharge, and depletion"
-          data-kicker="02 · Compare"
-          data-title="Paired outlet hydrographs"
-          data-copy="The outlet CSV keeps the familiar daily comparison: unimpaired flow, pumped flow, recharge, and the resulting streamflow depletion.">
-          <span>02</span> Hydrographs
+          data-number="Figure S2"
+          data-title="Basin hydrographs"
+          data-copy="Daily unimpaired and pumped outlet flow, recharge, and monthly streamflow depletion. The log-scaled flow panels resolve low-flow differences.">
+          Hydrographs
         </button>
         <button type="button" class="viewer-tab" aria-selected="false"
           data-src="../assets/pumping_response.png"
           data-alt="Green Valley pumping-response plots showing cumulative pumping, depletion, storage, and annual response"
-          data-kicker="03 · Account"
-          data-title="Pumping response and balance"
-          data-copy="Cumulative and annual views connect pumping to streamflow depletion and aquifer-storage change while making the accounting visible.">
-          <span>03</span> Response
+          data-number="Figure S3"
+          data-title="Paired pumping response"
+          data-copy="Impaired relative flow, monthly depletion, daily and 30-day response rates, and the seasonal partition between modeled streamflow and aquifer-storage response.">
+          Pumping response
         </button>
         <button type="button" class="viewer-tab" aria-selected="false"
           data-src="../assets/depletion_timeseries.png"
           data-alt="Green Valley streamflow-depletion time series with daily, annual, and dry-season summaries"
-          data-kicker="04 · Summarize"
-          data-title="Depletion through time"
-          data-copy="Daily, water-year, and dry-season summaries reveal when depletion develops and how its magnitude changes through the run.">
-          <span>04</span> Time series
+          data-number="Figure S4"
+          data-title="Streamflow depletion through time"
+          data-copy="Daily and cumulative modeled streamflow depletion, with annual and seasonal summaries over the paired simulation period.">
+          Depletion time series
         </button>
         <button type="button" class="viewer-tab" aria-selected="false"
           data-src="../assets/reach_depletion_summary.png"
-          data-alt="Four maps of the Green Valley stream network showing local and routed flow-depletion volume and fraction"
-          data-kicker="05 · Locate"
-          data-title="Reach-by-reach response"
-          data-copy="Local values describe exchange at each segment; routed values include connected upstream contributions. Keeping both prevents outlet effects from being mistaken for local impacts.">
-          <span>05</span> Reach maps
+          data-alt="Four maps of the Green Valley stream network showing local and routed streamflow-depletion volume and fraction"
+          data-number="Figure S5"
+          data-title="Reach-scale depletion summary"
+          data-copy="Cumulative reach-local and upstream-routed depletion volumes, full-period routed depletion fraction, and June–October routed depletion fraction.">
+          Reach summary
         </button>
         <button type="button" class="viewer-tab" aria-selected="false"
           data-src="../assets/cross_section.png"
           data-alt="Green Valley groundwater cross-section showing topography, aquifer base, and unimpaired and pumped water tables"
-          data-kicker="06 · Inspect"
-          data-title="Groundwater cross-section"
-          data-copy="A selected-date profile places the unimpaired and pumped water tables inside the modeled aquifer geometry and shows their difference along the section.">
-          <span>06</span> Cross-section
+          data-number="Figure S6"
+          data-title="Groundwater cross-section, 2024-09-30"
+          data-copy="Topography, aquifer base, and modeled unimpaired and pumped water tables along the selected cross-section at the end of the simulation.">
+          Cross-section
         </button>
       </div>
 
       <figure class="viewer-stage">
         <div class="viewer-image-wrap">
-          <img id="viewer-image" src="../assets/grid_setup.png" alt="Maps showing the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield">
+          <img id="viewer-image" src="../assets/grid_setup.png" alt="Maps of the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield">
         </div>
         <figcaption>
           <div>
-            <p class="eyebrow" id="viewer-kicker">01 · Prepare</p>
-            <h2 id="viewer-title">Grid and parameter setup</h2>
-            <p id="viewer-copy">The domain, drainage network, modeled stream nodes, aquifer thickness, transmissivity, and specific yield are checked together before simulation.</p>
+            <p class="figure-number" id="viewer-number">Figure S1</p>
+            <h2 id="viewer-title">Model grid and hydraulic inputs</h2>
+            <p id="viewer-copy">Topography and drainage, model boundaries and stream cells, initial saturated thickness, transmissivity, aquifer thickness, and specific yield for the 50 m grid.</p>
           </div>
-          <a id="viewer-download" href="../assets/grid_setup.png">Open full-resolution figure →</a>
+          <a id="viewer-download" href="../assets/grid_setup.png">Full-resolution image</a>
         </figcaption>
       </figure>
     </section>
 
-    <section class="example-note">
-      <div>
-        <p class="eyebrow">What this page is—and is not</p>
-        <h2>A result viewer, not a browser-based solver.</h2>
-      </div>
+    <section class="figure-method-note">
+      <h2>Accounting definitions</h2>
       <p>
-        The model still runs from the versioned CLI configuration, where paths,
-        units, assumptions, preflight checks, and provenance remain explicit.
-        This page is a portable tour of its outputs. It is suitable for GitHub
-        Pages and works without Python, a backend, or geospatial libraries.
+        Total modeled streamflow is groundwater exchange to the stream plus
+        saturation excess. Daily depletion is unimpaired total streamflow minus
+        pumped total streamflow. Reach-local values describe a reach and its
+        incremental catchment; routed values include every connected upstream
+        contribution. Reach accounting indicates where a flow change is received,
+        not which well caused it.
       </p>
+      <p><a href="../REACH_OUTPUTS.md">Reach-output definitions and numerical invariants</a></p>
     </section>
   </main>
 
   <footer>
-    <div><b>Green Valley example</b><span>Completed screening run · figures generated by gw_simulator</span></div>
-    <div class="footer-links">
-      <a href="../">Project overview</a>
-      <a href="../REACH_OUTPUTS.md">Reach schema</a>
-      <a href="https://github.com/daviddralle/gw_simulator">Source</a>
-    </div>
+    <span>Green Valley groundwater and streamflow-depletion screening model</span>
+    <a href="../">Return to study summary</a>
   </footer>
 
   <script>
     const tabs = document.querySelectorAll('.viewer-tab');
     const image = document.querySelector('#viewer-image');
-    const kicker = document.querySelector('#viewer-kicker');
+    const number = document.querySelector('#viewer-number');
     const title = document.querySelector('#viewer-title');
     const copy = document.querySelector('#viewer-copy');
     const download = document.querySelector('#viewer-download');
@@ -146,7 +145,7 @@
         tab.setAttribute('aria-selected', 'true');
         image.src = tab.dataset.src;
         image.alt = tab.dataset.alt;
-        kicker.textContent = tab.dataset.kicker;
+        number.textContent = tab.dataset.number;
         title.textContent = tab.dataset.title;
         copy.textContent = tab.dataset.copy;
         download.href = tab.dataset.src;
