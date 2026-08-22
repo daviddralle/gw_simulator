@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Figures from the archived full-period Green Valley groundwater and streamflow-depletion simulation.">
   <title>Green Valley model figures</title>
-  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/site.css?v=scientific-reader-1">
 </head>
 <body>
   <header class="site-header">
@@ -45,61 +45,76 @@
       <div><dt>Scenarios</dt><dd>Unimpaired and pumped</dd></div>
     </dl>
 
-    <section class="viewer" aria-labelledby="viewer-title">
+    <section class="viewer" aria-labelledby="viewer-title" tabindex="0">
       <div class="viewer-tabs" role="group" aria-label="Select a model figure">
-        <button type="button" class="viewer-tab" aria-selected="true"
+        <button type="button" class="viewer-tab" aria-pressed="true" data-key="grid"
           data-src="../assets/grid_setup.png"
           data-alt="Maps of the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield"
           data-number="Figure S1"
           data-title="Model grid and hydraulic inputs"
           data-copy="Topography and drainage, model boundaries and stream cells, initial saturated thickness, transmissivity, aquifer thickness, and specific yield for the 50 m grid.">
-          Grid and inputs
+          <img src="../assets/thumbs/grid_setup.png" alt="" loading="lazy">
+          <span><small>Figure S1</small>Grid and inputs</span>
         </button>
-        <button type="button" class="viewer-tab" aria-selected="false"
+        <button type="button" class="viewer-tab" aria-pressed="false" data-key="hydrographs"
           data-src="../assets/hydrographs.png"
           data-alt="Daily Green Valley hydrographs comparing unimpaired and pumped streamflow, recharge, and depletion"
           data-number="Figure S2"
           data-title="Basin hydrographs"
           data-copy="Daily unimpaired and pumped outlet flow, recharge, and monthly streamflow depletion. The log-scaled flow panels resolve low-flow differences.">
-          Hydrographs
+          <img src="../assets/thumbs/hydrographs.png" alt="" loading="lazy">
+          <span><small>Figure S2</small>Hydrographs</span>
         </button>
-        <button type="button" class="viewer-tab" aria-selected="false"
+        <button type="button" class="viewer-tab" aria-pressed="false" data-key="response"
           data-src="../assets/pumping_response.png"
           data-alt="Green Valley pumping-response plots showing cumulative pumping, depletion, storage, and annual response"
           data-number="Figure S3"
           data-title="Paired pumping response"
           data-copy="Impaired relative flow, monthly depletion, daily and 30-day response rates, and the seasonal partition between modeled streamflow and aquifer-storage response.">
-          Pumping response
+          <img src="../assets/thumbs/pumping_response.png" alt="" loading="lazy">
+          <span><small>Figure S3</small>Pumping response</span>
         </button>
-        <button type="button" class="viewer-tab" aria-selected="false"
+        <button type="button" class="viewer-tab" aria-pressed="false" data-key="depletion"
           data-src="../assets/depletion_timeseries.png"
           data-alt="Green Valley streamflow-depletion time series with daily, annual, and dry-season summaries"
           data-number="Figure S4"
           data-title="Streamflow depletion through time"
           data-copy="Daily and cumulative modeled streamflow depletion, with annual and seasonal summaries over the paired simulation period.">
-          Depletion time series
+          <img src="../assets/thumbs/depletion_timeseries.png" alt="" loading="lazy">
+          <span><small>Figure S4</small>Depletion time series</span>
         </button>
-        <button type="button" class="viewer-tab" aria-selected="false"
+        <button type="button" class="viewer-tab" aria-pressed="false" data-key="reaches"
           data-src="../assets/reach_depletion_summary.png"
           data-alt="Four maps of the Green Valley stream network showing local and routed streamflow-depletion volume and fraction"
           data-number="Figure S5"
           data-title="Reach-scale depletion summary"
           data-copy="Cumulative reach-local and upstream-routed depletion volumes, full-period routed depletion fraction, and June–October routed depletion fraction.">
-          Reach summary
+          <img src="../assets/thumbs/reach_depletion_summary.png" alt="" loading="lazy">
+          <span><small>Figure S5</small>Reach summary</span>
         </button>
-        <button type="button" class="viewer-tab" aria-selected="false"
+        <button type="button" class="viewer-tab" aria-pressed="false" data-key="cross-section"
           data-src="../assets/cross_section.png"
           data-alt="Green Valley groundwater cross-section showing topography, aquifer base, and unimpaired and pumped water tables"
           data-number="Figure S6"
           data-title="Groundwater cross-section, 2024-09-30"
           data-copy="Topography, aquifer base, and modeled unimpaired and pumped water tables along the selected cross-section at the end of the simulation.">
-          Cross-section
+          <img src="../assets/thumbs/cross_section.png" alt="" loading="lazy">
+          <span><small>Figure S6</small>Cross-section</span>
         </button>
       </div>
 
       <figure class="viewer-stage">
+        <div class="viewer-toolbar">
+          <span id="viewer-position" aria-live="polite">Figure 1 of 6</span>
+          <div>
+            <button type="button" id="viewer-previous" aria-label="Show previous figure">← Previous</button>
+            <button type="button" id="viewer-next" aria-label="Show next figure">Next →</button>
+          </div>
+        </div>
         <div class="viewer-image-wrap">
-          <img id="viewer-image" src="../assets/grid_setup.png" alt="Maps of the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield">
+          <a id="viewer-image-link" href="../assets/grid_setup.png" target="_blank" rel="noopener" aria-label="Open Figure S1 at full resolution">
+            <img id="viewer-image" src="../assets/grid_setup.png" alt="Maps of the Green Valley model boundary, elevation, stream network, aquifer thickness, transmissivity, and specific yield">
+          </a>
         </div>
         <figcaption>
           <div>
@@ -107,7 +122,7 @@
             <h2 id="viewer-title">Model grid and hydraulic inputs</h2>
             <p id="viewer-copy">Topography and drainage, model boundaries and stream cells, initial saturated thickness, transmissivity, aquifer thickness, and specific yield for the 50 m grid.</p>
           </div>
-          <a id="viewer-download" href="../assets/grid_setup.png">Full-resolution image</a>
+          <a id="viewer-download" href="../assets/grid_setup.png" target="_blank" rel="noopener">Open full-resolution image</a>
         </figcaption>
       </figure>
     </section>
@@ -132,25 +147,62 @@
   </footer>
 
   <script>
-    const tabs = document.querySelectorAll('.viewer-tab');
+    const tabs = Array.from(document.querySelectorAll('.viewer-tab'));
     const image = document.querySelector('#viewer-image');
+    const imageLink = document.querySelector('#viewer-image-link');
     const number = document.querySelector('#viewer-number');
     const title = document.querySelector('#viewer-title');
     const copy = document.querySelector('#viewer-copy');
     const download = document.querySelector('#viewer-download');
+    const position = document.querySelector('#viewer-position');
+    const previous = document.querySelector('#viewer-previous');
+    const next = document.querySelector('#viewer-next');
+    const viewer = document.querySelector('.viewer');
+    let currentIndex = 0;
 
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        tabs.forEach((item) => item.setAttribute('aria-selected', 'false'));
-        tab.setAttribute('aria-selected', 'true');
-        image.src = tab.dataset.src;
-        image.alt = tab.dataset.alt;
-        number.textContent = tab.dataset.number;
-        title.textContent = tab.dataset.title;
-        copy.textContent = tab.dataset.copy;
-        download.href = tab.dataset.src;
-      });
+    function showFigure(index, updateHash = true) {
+      currentIndex = Math.max(0, Math.min(index, tabs.length - 1));
+      const tab = tabs[currentIndex];
+      tabs.forEach((item) => item.setAttribute('aria-pressed', 'false'));
+      tab.setAttribute('aria-pressed', 'true');
+      image.src = tab.dataset.src;
+      image.alt = tab.dataset.alt;
+      imageLink.href = tab.dataset.src;
+      imageLink.setAttribute('aria-label', `Open ${tab.dataset.number} at full resolution`);
+      number.textContent = tab.dataset.number;
+      title.textContent = tab.dataset.title;
+      copy.textContent = tab.dataset.copy;
+      download.href = tab.dataset.src;
+      position.textContent = `Figure ${currentIndex + 1} of ${tabs.length}`;
+      previous.disabled = currentIndex === 0;
+      next.disabled = currentIndex === tabs.length - 1;
+      if (updateHash) tab.scrollIntoView({block: 'nearest', inline: 'nearest'});
+      if (updateHash) history.replaceState(null, '', `#${tab.dataset.key}`);
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => showFigure(index));
     });
+
+    previous.addEventListener('click', () => showFigure(currentIndex - 1));
+    next.addEventListener('click', () => showFigure(currentIndex + 1));
+    viewer.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        showFigure(currentIndex - 1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        showFigure(currentIndex + 1);
+      }
+    });
+
+    const initialKey = decodeURIComponent(window.location.hash.slice(1));
+    const initialIndex = tabs.findIndex((tab) => tab.dataset.key === initialKey);
+    showFigure(initialIndex >= 0 ? initialIndex : 0, false);
+    if (initialIndex >= 0) {
+      requestAnimationFrame(() => viewer.scrollIntoView({block: 'start'}));
+    }
   </script>
 </body>
 </html>
