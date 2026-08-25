@@ -8,7 +8,7 @@ dependencies:
   - fiona
   - geemap
   - geopandas
-  - landlab
+  - landlab=2.10.1
   - matplotlib
   - numpy
   - pandas

@@ -66,9 +66,9 @@ def git_provenance(repository: Path) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the Dupuit groundwater simulation.")
-    parser.add_argument("--dem", default=Path("data/drainage_area_10m_dem_clipped.tif"), type=Path)
-    parser.add_argument("--boundary", default=Path("data/comid_8273277.gpkg"), type=Path)
-    recharge_group = parser.add_mutually_exclusive_group()
+    parser.add_argument("--dem", required=True, type=Path)
+    parser.add_argument("--boundary", required=True, type=Path)
+    recharge_group = parser.add_mutually_exclusive_group(required=True)
     recharge_group.add_argument(
         "--recharge-csv",
         default=None,
@@ -84,9 +84,9 @@ def main() -> None:
             "one-based band and units columns."
         ),
     )
-    parser.add_argument("--transmissivity", default=Path("data/GLYMPHS/transmissivity_m2d.tif"), type=Path)
-    parser.add_argument("--depth-to-bedrock", default=Path("data/GLYMPHS/depthToBedrock_m.tif"), type=Path)
-    parser.add_argument("--porosity", default=Path("data/GLYMPHS/storativity.tif"), type=Path)
+    parser.add_argument("--transmissivity", required=True, type=Path)
+    parser.add_argument("--depth-to-bedrock", required=True, type=Path)
+    parser.add_argument("--porosity", required=True, type=Path)
     parser.add_argument("--wells", default=None, type=Path)
     parser.add_argument("--pumping-schedule", default=None, type=Path)
     parser.add_argument(
@@ -236,10 +236,6 @@ def main() -> None:
         help="Optional YAML config to record in the run provenance.",
     )
     args = parser.parse_args()
-    if args.recharge_csv is None and args.recharge_raster_manifest is None:
-        args.recharge_csv = Path("data/daily_water_balance_full.csv")
-
-
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 

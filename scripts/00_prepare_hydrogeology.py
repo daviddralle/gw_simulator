@@ -13,7 +13,7 @@ from gw_simulator.hydrogeology import prepare_glhymps2_porosity
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Build an official GLHYMPS 2.0 hydrogeology package using Pelletier "
+            "Build a GLHYMPS 2.0 hydrogeology alternative using Pelletier "
             "2016 landform thickness when supplied, and compare it with legacy rasters."
         )
     )

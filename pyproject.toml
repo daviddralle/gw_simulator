@@ -3,15 +3,18 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "boussinesq-pumping"
+name = "gw-simulator"
 version = "0.1.0"
 description = "Catchment-scale Dupuit-Boussinesq groundwater pumping and streamflow-depletion workflow"
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [
+  {name = "David Dralle"},
+]
 dependencies = [
   "fiona",
   "geopandas",
-  "landlab",
+  "landlab>=2.10.1,<2.11",
   "matplotlib",
   "numpy",
   "pandas",
@@ -31,6 +34,10 @@ dependencies = [
 earth-engine = ["earthengine-api", "geemap"]
 reports = ["reportlab"]
 dev = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/daviddralle/gw_simulator"
+Issues = "https://github.com/daviddralle/gw_simulator/issues"
 
 [tool.setuptools.packages.find]
 include = ["gw_simulator*"]

@@ -5,13 +5,13 @@ combination in a named workflow YAML rather than overwriting shared rasters.
 
 | Variable | Option | Path | Model units |
 | --- | --- | --- | --- |
-| Transmissivity | GLHYMPS 2.0 + Pelletier depth (baseline) | `data/derived/green_valley/glhymps2/transmissivity_glhymps2_pelletier2016_m2day.tif` | m2/day |
+| Transmissivity | GLHYMPS 2.0 + Pelletier depth (constructed alternative) | `data/derived/green_valley/glhymps2/transmissivity_glhymps2_pelletier2016_m2day.tif` | m2/day |
 | Transmissivity | Sonoma County merged | `data/hydrogeology/sonoma_county/transmissivity_sonoma_county_m2day.tif` | assumed m2/day |
 | Transmissivity | Continental (current starting option) | `data/hydrogeology/continental/transmissivity_continental_m2day.tif` | m2/day |
-| Specific yield | GLHYMPS 2.0 total-porosity proxy (baseline) | `data/derived/green_valley/glhymps2/specific_yield_glhymps2_total_porosity.tif` | dimensionless |
+| Specific yield | GLHYMPS 2.0 total-porosity proxy (constructed alternative) | `data/derived/green_valley/glhymps2/specific_yield_glhymps2_total_porosity.tif` | dimensionless |
 | Specific yield | Sonoma County merged (`S`) | `data/hydrogeology/sonoma_county/specific_yield_sonoma_county.tif` | dimensionless |
 | Specific yield | Continental (current starting option) | `data/hydrogeology/continental/specific_yield_continental.tif` | dimensionless |
-| Depth to bedrock | Pelletier 2016 landform mosaic (baseline) | `data/derived/green_valley/glhymps2/depth_to_unweathered_bedrock_pelletier2016_m.tif` | m |
+| Depth to bedrock | Pelletier 2016 landform mosaic (constructed alternative) | `data/derived/green_valley/glhymps2/depth_to_unweathered_bedrock_pelletier2016_m.tif` | m |
 | Depth to bedrock | Shangguan 2017 | `data/derived/green_valley/glhymps2/depth_to_bedrock_shangguan2017_m.tif` | m |
 | Depth to bedrock | Continental (current starting option) | `data/hydrogeology/continental/depth_to_bedrock_continental_m.tif` | m |
 

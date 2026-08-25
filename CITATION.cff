@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, cite the repository and the version or commit used."
+title: "gw_simulator"
+type: software
+authors:
+  - family-names: Dralle
+    given-names: David
+repository-code: "https://github.com/daviddralle/gw_simulator"
+version: 0.1.0

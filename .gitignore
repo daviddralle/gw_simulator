@@ -1,6 +1,13 @@
 data/
 /outputs/
 /runs/
+/output/
+/tmp/
+.venv/
+.pytest_cache/
+.coverage
+build/
+dist/
 .DS_Store
 __pycache__/
 *.pyc

@@ -1,278 +1,167 @@
 # gw_simulator
 
-`gw_simulator` is a Python package for simulating catchment-scale groundwater flow and streamflow depletion using the Landlab Dupuit-Boussinesq component. It extracts topography from Earth Engine, calculates recharge, and runs paired unimpaired and pumped scenarios for a watershed boundary.
+`gw_simulator` runs catchment-scale, transient Dupuit–Boussinesq groundwater
+simulations with optional pumping. A paired run compares an unimpaired branch
+with an otherwise identical pumped branch and reports changes in total modeled
+streamflow, aquifer storage, and flow through each extracted stream reach.
 
-## Reproducible Workflow
+The model is intended for screening and sensitivity analysis. It is not a
+calibrated groundwater model unless the user supplies and evaluates calibrated
+inputs for a particular site.
 
-The recommended entry point is a versioned YAML config. It keeps the watershed,
-forcing period, hydrogeology, pumping assumptions, spinup, and requested outputs
-together and runs a preflight check before the expensive model stage:
+## Try the model
 
-```bash
-eval "$(mamba shell hook --shell zsh)"
-mamba activate lab
-python scripts/run_workflow.py --config configs/green_valley.yml --stage all
-```
-
-Individual stages can be resumed with `--stage dem`, `hydrogeology`, `recharge`,
-`preflight`, `groundwater`, or `plots`. PML/PRISM requests are cached by watershed
-geometry and year. Use `--refresh-forcing` only when the remote products must be
-queried again.
-
-For the current Green Valley dataset choice and a concise collaborator-facing
-description of recharge, groundwater, pumping, dry-cell handling, flow accounting,
-outputs, and limitations, see `COLLABORATOR_METHODS.md`. Named S/T/depth alternatives
-and file hashes are listed in `configs/HYDROGEOLOGY_OPTIONS.md`.
-
-## Overview of the Workflow
-
-To run a simulation for a new site, you must complete four main steps using the scripts provided in the `scripts/` directory:
-
-1. **Extract DEM**: Download and clip a 3DEP DEM for your catchment.
-2. **Compute Recharge**: Generate a daily time series of recharge forcing.
-3. **Run Groundwater**: Simulate the physical groundwater system.
-4. **Plot Cross Sections**: (Optional) Visualize the spatial distribution of the water table and depletion cone.
-
----
-
-## Input Data Formats
-
-To apply this model to your own watershed, you will need to prepare specific inputs.
-
-### 1. Catchment Boundary
-- **Format**: Any vector format supported by GeoPandas (e.g., `.gpkg`, `.shp`, `.geojson`, `.kml`).
-- **Usage**: Used to clip the DEM, define the active modeling domain, and mask well locations.
-
-### 2. Hydrogeology Data
-- **Format**: `.tif` rasters.
-- **Usage**: The groundwater model consumes three aligned rasters:
-  - Transmissivity (`transmissivity_m2d.tif`)
-  - Depth to Bedrock (`depthToBedrock_m.tif`)
-  - Drainable porosity / specific yield (`storativity.tif` in the Green Valley data)
-- **Official baseline**: `scripts/00_prepare_hydrogeology.py` rasterizes GLHYMPS
-  2.0 total porosity and permeability, then combines its hydraulic conductivity
-  with Pelletier et al. (2016) landform-specific thickness. Upland pixels use
-  regolith thickness to unweathered bedrock; lowland pixels use sedimentary-deposit
-  thickness. GLHYMPS total porosity is used as a screening-level specific-yield
-  proxy, not as a measured drainable porosity.
-- **Sensitivity data**: Optional Shangguan et al. (2017) SoilGrids depth and legacy
-  hydrogeology rasters can be supplied for comparison, but they are not required
-  and never affect the official baseline. Pelletier is about 1 km and its regolith
-  layer is explicitly experimental, so thickness and conductivity remain
-  first-order model uncertainties.
-
-### 3. Recharge Time Series
-- **Default**: omit `recharge.source` (or set it to
-  `earth_engine_deficit`) to build watershed-mean recharge from PML V2.2a ET,
-  PRISM precipitation, and the storage-deficit method through Earth Engine.
-- **Basin time series**: set `recharge.source: csv` and provide a complete daily
-  `.csv` with `date` and `Recharge` in **mm/day**.
-- **Spatial time series**: set `recharge.source: raster_manifest` and provide a
-  daily manifest of georeferenced raster paths, with optional band and units.
-  This applies spatial recharge directly to groundwater-grid nodes and is the
-  recommended external-input structure for larger basins.
-- **Full contract**: see [docs/RECHARGE_INPUTS.md](docs/RECHARGE_INPUTS.md) for
-  formats, validation, examples, and the planned Earth Engine spatial-deficit
-  pathway.
-
-### 4. Pumping Data (Optional)
-Pumping is fully optional. If omitted, the model will run a purely natural (unimpaired) scenario. If included, you must provide two files:
-
-**Well Locations:**
-- **Format**: `.gpkg` or `.shp` point vector file.
-- **Required Columns**: Must contain a unique identifier column, typically `APN` (Assessor's Parcel Number).
-
-**Pumping Schedule:**
-- **Format**: `.csv` file.
-- **Required Columns**:
-  - `Month`: Integer from `1` to `12` representing the calendar month.
-  - `APN`: The unique identifier matching the Well Locations file.
-  - *Either* `waterUse_m3Day` (average cubic meters per day for that month) or `waterUse_m3Month` (total cubic meters per month).
-  - For the default `timeseries` mode, `Date` or `Year` is also required. The actual year-month records are used without averaging across years. Pumping is zero outside the schedule coverage, while missing months inside the coverage are errors.
-
----
-
-## Step-by-Step Walkthrough
-
-### Step 1: Extract the DEM
-Run the DEM extraction script to pull high-resolution topography from Google Earth Engine. Note that you must have your Earth Engine environment initialized (`earthengine authenticate`).
+The synthetic example is self-contained and does not require Earth Engine or
+Green Valley data. It generates deterministic inputs and runs a one-year paired
+simulation after a one-year unpumped spin-up.
 
 ```bash
-python scripts/01_extract_dem.py \
-    --boundary path/to/your_catchment.gpkg \
-    --output-tif data/my_site_dem.tif
+git clone https://github.com/daviddralle/gw_simulator.git
+cd gw_simulator
+mamba env create -f environment.yml
+mamba activate boussinesq-pumping
+bash examples/synthetic_basin/run.sh
 ```
 
-### Step 2: Compute Recharge
-Generate the daily recharge CSV for your simulation period.
+Results are written to `examples/synthetic_basin/outputs/`. See
+[`examples/synthetic_basin/README.md`](examples/synthetic_basin/README.md) for
+the input definitions and the parts of the workflow exercised by the run.
+
+The test suite is independent of Earth Engine:
 
 ```bash
-python scripts/02_compute_recharge.py \
-    --boundary path/to/your_catchment.gpkg \
-    --output-csv data/my_site_recharge.csv \
-    --start-year 2000 \
-    --end-year 2024 \
-    --cache-dir data/forcing/my_site/pml_v22a_prism
+python -m pytest -q
 ```
 
-This uses PML V2.2a eight-day mean daily ET, PRISM daily precipitation, and the
-unbounded storage-deficit method. Composite mean ET is held over each documented
-eight-day interval, preserving its water volume. Source chunks, daily forcing,
-the water-balance table, and a provenance JSON are all written locally.
-The YAML workflow runs this Earth Engine deficit method by default. To bypass
-Earth Engine, select `csv` or `raster_manifest` and point the config at the
-user-supplied forcing described in [the recharge input contract](docs/RECHARGE_INPUTS.md).
+## Green Valley case study
 
-### Step 3: Run the Groundwater Simulation
-Run the Dupuit-Boussinesq model. The script aligns the hydrogeologic rasters, extracts fixed-head stream nodes, performs a two-year transient spin-up immediately before the requested simulation by default, and uses those spin-up heads for the main run.
+[`examples/green_valley/README.md`](examples/green_valley/README.md) documents
+the current 39-reach Green Valley application and provides selected figures and
+machine-readable results. That run used the project's continental/legacy
+transmissivity, depth-to-bedrock, and specific-yield rasters. The exact site
+inputs are not distributed in this repository, so the case study is not the
+public execution example.
 
-**For an Unimpaired (Natural) Run:**
-```bash
-python scripts/03_run_groundwater.py \
-    --boundary path/to/your_catchment.gpkg \
-    --dem data/my_site_dem.tif \
-    --recharge-csv data/my_site_recharge.csv \
-    --start-date 2022-10-01 \
-    --end-date 2023-09-30
-```
-Pass `--transmissivity`, `--depth-to-bedrock`, and `--porosity` explicitly, or use
-the YAML runner so a production run cannot silently fall back to the legacy files.
+## Configured workflow
 
-**For a Run with Pumping:**
-To evaluate streamflow depletion, pass the optional `--wells` and `--pumping-schedule` arguments. The script will automatically run *both* scenarios and generate comparative hydrographs.
+Site applications are defined by a versioned YAML file. Preflight checks verify
+input existence, spatial coverage, recharge completeness, requested dates, and
+estimated grid size before the model runs.
 
 ```bash
-python scripts/03_run_groundwater.py \
-    --boundary path/to/your_catchment.gpkg \
-    --dem data/my_site_dem.tif \
-    --recharge-csv data/my_site_recharge.csv \
-    --wells path/to/my_wells.gpkg \
-    --pumping-schedule path/to/my_pumping.csv \
-    --pumping-mode timeseries \
-    --pumping-source-mode topographic \
-    --pumping-source-area-threshold 500000 \
-    --start-date 2022-10-01 \
-    --end-date 2023-09-30
+python scripts/run_workflow.py --config path/to/site.yml --stage preflight
+python scripts/run_workflow.py --config path/to/site.yml --stage groundwater
+python scripts/run_workflow.py --config path/to/site.yml --stage plots
 ```
 
-Use `--pumping-mode climatology` only when intentionally repeating the mean rate for each calendar month across every simulation year.
+`--stage all` prepares any configured remote inputs, runs preflight, executes the
+model, and makes the configured plots. Existing DEM and hydrogeology rasters are
+used without rebuilding them. Earth Engine stages require prior authentication.
+The Green Valley configurations require local, untracked site inputs; see
+[`configs/README.md`](configs/README.md) before using them.
 
-Topographic pumping allocates each zone's daily demand across its currently
-saturated cells, weighted by transmissive capacity and capped at half of each
-cell's drainable storage by default. The zones are disjoint catchments of reaches
-on a coarser D8 channel network. `--pumping-source-area-threshold` controls that
-source network independently of the finer fixed-head stream boundary; it must be
-at least `--stream-area-threshold`. If a zone cannot provide all reported demand,
-the normal run clips pumping to available capacity and records the omitted volume.
-`--strict-pumping-supply` instead stops at the first shortfall.
+## Required model inputs
 
-For a localized fractured-rock sensitivity, `--well-additional-depth` lowers the
-aquifer base only at exact 50 m cells containing mapped pumping wells. It does not
-spread pumping to neighboring cells and leaves the basin-wide link conductivity
-field unchanged. Use it with `--strict-pumping-supply` when testing whether a local
-well column can supply the complete schedule:
+### Watershed and topography
 
-```bash
-python scripts/03_run_groundwater.py \
-    ... \
-    --pumping-mode climatology \
-    --well-additional-depth 25 \
-    --strict-pumping-supply
-```
+- A watershed polygon readable by GeoPandas, with a defined coordinate system.
+- A georeferenced DEM that covers the watershed.
 
-### Streamflow Accounting
+The DEM defines land-surface elevation, D8 flow routing, the stream network, and
+the aquifer top. `scripts/01_extract_dem.py` can obtain a 3DEP DEM through Earth
+Engine, but a local DEM can be supplied directly.
 
-The canonical daily streamflow is the net water contribution from the modeled catchment:
+### Hydrogeology
+
+The groundwater model consumes three georeferenced rasters:
+
+- transmissivity in m²/day;
+- depth to bedrock, interpreted as aquifer thickness, in metres; and
+- drainable porosity, interpreted as specific yield, as a fraction from zero to
+  one.
+
+Pass these paths explicitly in YAML or on the command line. The model infers
+hydraulic conductivity as transmissivity divided by modeled aquifer thickness.
+Named datasets evaluated for Green Valley are listed in
+[`configs/HYDROGEOLOGY_OPTIONS.md`](configs/HYDROGEOLOGY_OPTIONS.md).
+
+### Recharge
+
+Three input modes are supported:
+
+- `earth_engine_deficit`: watershed-mean recharge calculated from PML V2.2a ET,
+  PRISM precipitation, and an unbounded storage deficit;
+- `csv`: one basin-mean recharge value in mm/day for every modeled and spin-up
+  day; or
+- `raster_manifest`: one georeferenced spatial recharge field for every day.
+
+Formats and validation rules are in
+[`docs/RECHARGE_INPUTS.md`](docs/RECHARGE_INPUTS.md). Pixelwise Earth Engine
+deficit extraction is reserved for future implementation; it is not represented
+as an available method.
+
+### Pumping
+
+Pumping is optional. A pumping run requires:
+
+- a point layer with a unique identifier such as `APN`; and
+- a CSV that joins on that identifier and contains `waterUse_m3Day` or
+  `waterUse_m3Month`.
+
+`timeseries` mode uses dated year-month records. `climatology` mode intentionally
+repeats mean calendar-month rates in every modeled year. Pumping can be applied
+at mapped well cells or allocated within disjoint topographic source zones.
+
+## Flow and depletion accounting
+
+Daily total modeled streamflow is
 
 ```text
-total_streamflow_m3d = groundwater_to_stream_m3d + saturation_excess_m3d
+total_streamflow = groundwater_to_stream + saturation_excess
 ```
 
-- `groundwater_to_stream_m3d` is the signed groundwater exchange integrated over all adaptive solver substeps. Positive values discharge to streams; negative values indicate stream loss to the aquifer.
-- In the standard `routed_volume_limited` mode, `saturation_excess_m3d` is the
-  solver-integrated local surface-water generation plus any sub-milliliter-scale
-  routing correction needed to remove accumulated roundoff. In the explicit
-  legacy `unlimited_fixed_head` mode it remains the balance-closing remainder.
-- `landlab_saturation_excess_m3d` retains Landlab's adaptive-substep surface-flux
-  estimate. Its difference from the closed term is reported in
-  `landlab_surface_flux_integration_error_m3d` as a numerical diagnostic.
-- `groundwater_discharge_m3d` and `stream_loss_to_groundwater_m3d` store the two nonnegative directions of groundwater exchange for convenience.
-- `mass_balance_streamflow_m3d` and `mass_balance_error_m3d` are diagnostics. They are not substituted for the explicitly calculated streamflow.
+The standard `routed_volume_limited` method routes surface generation and signed
+groundwater exchange through the reach network at every adaptive solver substep.
+Potential losing-stream exchange is limited by the water available from upstream
+flow and local generation. Channel travel time, storage, and reinfiltration are
+not represented.
 
-Natural and pumped scenario CSVs retain internal pathway terms for water-balance
-auditing. All depletion tables, figures, maps, videos, and headline metrics report
-only total flow depletion. The standard solver prevents physical routed flow from
-becoming negative; depletion itself is not clipped.
+Streamflow depletion is unimpaired total flow minus pumped total flow. Pumping
+response is also tracked as the change in aquifer-storage depletion. Reported
+tables distinguish scheduled pumping, storage-limited allocated pumping, modeled
+extraction recovered from paired balances, and source-capacity shortfall.
 
-At every adaptive groundwater substep, local surface generation and signed
-groundwater/stream exchange are aggregated by reach and routed headwater to outlet.
-If potential losing-stream exchange exceeds incoming plus locally generated water,
-that unavailable loss is rejected before aquifer storage is updated. Gaining-stream
-exchange is unrestricted. Diagnostics record rejected potential loss, limiter
-iterations, dry reaches, solver surface-flux clipping, and the final daily routing
-roundoff correction. `--stream-loss-mode unlimited_fixed_head` is retained only for
-controlled legacy comparisons.
+Every run writes `reach_daily.parquet` and `reaches.gpkg`. Local reach values
+refer to disjoint incremental catchments and may be summed to recover the basin
+total. Routed values include upstream contributions and must not be summed across
+reaches. The outlet routed value equals basin flow. Full definitions and enforced
+checks are in [`docs/REACH_OUTPUTS.md`](docs/REACH_OUTPUTS.md).
 
-Every run also performs reach accounting on the fine fixed-head stream network.
-Each active aquifer cell is assigned to the reach containing its first downstream
-stream node. The compressed `reach_daily.parquet` stores both the total flow
-generated locally and the total integrated through that link from all upstream
-reaches; `reaches.gpkg` supplies the joinable network geometry. This locates where
-the model expresses depletion but does not attribute it to wells or pumping
-zones. See [docs/REACH_OUTPUTS.md](docs/REACH_OUTPUTS.md) for the schema, spatial
-definition, and enforced local-sum and routed-outlet checks.
+## Principal outputs
 
-The standard `plots` stage also makes one four-panel network summary and two
-short water-year MP4s of trailing 30-day upstream-integrated total-flow depletion
-fraction. By default it
-chooses the driest and wettest complete water years by modeled recharge; specify
-`outputs.reach_video_water_years` in YAML to pin particular years. These are
-network-wide products, not a separate outlet-style figure for every reach.
+- daily unimpaired and pumped water-balance CSVs;
+- a daily depletion and pumping-response table;
+- hydrograph, depletion, pumping-response, and grid figures;
+- requested natural and pumped water-table snapshots;
+- reach geometry and daily local/routed reach results; and
+- JSON metadata containing configuration, input hashes, code revision, output
+  hashes, and numerical validation results.
 
-With `--pumping-source-mode well_cell`, pumping is imposed as negative recharge at
-mapped well nodes. Topographic mode instead imposes the allocated sink across each
-bounded source zone. The depletion table distinguishes reported schedule,
-source-zone allocation, and the extraction recovered from the paired model water
-balances. Any source-capacity shortfall makes the simulated depletion a lower-bound
-estimate for the full reported schedule, conditional on the model structure. It is
-not a simulated deep-aquifer flux.
+## Main limitations
 
-Each run also writes a dated `simulation_metadata_*.json` containing the grid
-configuration, input paths and hashes, spin-up period, initial condition, pumping
-coverage, outlet location, canonical streamflow definition, reach schema and
-definition versions, reach-assignment digest, output hashes, and distributed-to-
-basin validation errors. It also records the Git commit/dirty flag when available
-and SHA-256 hashes of the groundwater module and workflow entry points, so an
-uncommitted development run can still be tied to the exact source files used.
+- The Dupuit approximation represents an unconfined aquifer with predominantly
+  horizontal groundwater flow.
+- Stream cells are fixed-head boundaries, subject to the routed water-availability
+  limit for losing exchange.
+- Reach routing is instantaneous.
+- Results depend strongly on transmissivity, aquifer thickness, specific yield,
+  recharge, and the representation of pumping sources.
+- Reach accounting identifies where the model expresses a flow change; it does
+  not attribute that change to a particular well.
+- A completed numerical run is not evidence that site parameters are calibrated.
 
-### Modeling Assumptions
+## Development
 
-- Stream stage is still represented by internal fixed-head nodes, but standard
-  losing exchange is capped by routed stream-water availability at every adaptive
-  substep. Surface water is delivered immediately, without channel travel time,
-  channel storage, or reinfiltration.
-- The groundwater component uses the Dupuit approximation for an unconfined aquifer. The supplied porosity raster is interpreted as drainable porosity (specific yield), not confined elastic storativity.
-- GLHYMPS porosity is a total-porosity proxy rather than an independently calibrated specific-yield field. `--specific-yield-floor` is available only as an explicit whole-domain sensitivity and leaves the input raster preserved in a separate model field.
-- Hydraulic conductivity is inferred as transmissivity divided by depth to bedrock. The depth-to-bedrock raster therefore defines the modeled aquifer thickness. `--additional-aquifer-depth` is zero by default and should be treated as a basin-wide sensitivity test because changing thickness also changes storage and, depending on `--deep-aquifer-hydraulics`, conductivity or transmissivity.
-- `--well-additional-depth` is a separate local sensitivity. It extends only mapped pumping cells and preserves their existing conductivity and specific yield. A successful strict run therefore means the existing hydrogeologic properties can transmit and store the full scheduled demand within those deeper columns; it does not validate those properties independently.
-- The Green Valley example uses spatially uniform basin-mean recharge. Other
-  runs may supply a daily raster manifest; the solver then applies the aligned
-  spatial field directly. The default storage-deficit calculation is a climatic
-  cumulative deficit with no imposed maximum bucket depth.
-- Production run metadata includes SHA-256 hashes of the model rasters, boundary,
-  recharge, pumping inputs, and YAML config so results can be tied to exact inputs.
-- `--snapshot-date` may be repeated to save only selected head arrays. This avoids
-  unnecessary storage when scaling to a larger watershed.
-- Negative `groundwater_to_stream_m3d` values remain valid internal signed exchange,
-  but the routed total flow through every reach is nonnegative in the standard mode.
-
-### Step 4: Visualize Depletion Cross Sections
-If you want to view a 2D cross section of the aquifer showing the physical depletion cone at the end of the dry season, run the plotting script:
-
-```bash
-python scripts/04_plot_cross_sections.py \
-    --boundary path/to/your_catchment.gpkg \
-    --dem data/my_site_dem.tif \
-    --date 2023-09-30
-```
-*(This script will automatically detect if a pumped scenario was run. If no pumping was provided, it will simply plot the natural groundwater table).*
+Python 3.11 or newer is required. Runtime dependencies are declared in
+`pyproject.toml`; `environment.yml` also includes Earth Engine, plotting, testing,
+and video dependencies used by the complete workflow.

@@ -59,6 +59,15 @@ def prepare_dem(config, *, refresh: bool) -> None:
 
 
 def prepare_hydrogeology(config) -> None:
+    model_inputs = [
+        config.path_value("transmissivity"),
+        config.path_value("depth_to_bedrock"),
+        config.path_value("porosity"),
+    ]
+    if all(path is not None and path.exists() for path in model_inputs):
+        paths = ", ".join(str(path) for path in model_inputs)
+        print(f"Using existing hydrogeology inputs: {paths}", flush=True)
+        return
     command = [
         sys.executable,
         "scripts/00_prepare_hydrogeology.py",
@@ -328,6 +337,7 @@ def main() -> None:
     parser.add_argument("--refresh-forcing", action="store_true")
     args = parser.parse_args()
     config = load_workflow_config(args.config)
+    outputs = config.values.get("outputs", {})
 
     if args.stage in {"dem", "all"}:
         prepare_dem(config, refresh=args.refresh_dem)
@@ -341,9 +351,14 @@ def main() -> None:
         run_groundwater(config)
     if args.stage in {"plots", "all"}:
         plot_cross_sections(config)
-        if config.values.get("pumping", {}).get("enabled", False):
+        if (
+            config.values.get("pumping", {}).get("enabled", False)
+            and outputs.get("reach_visualizations", True)
+        ):
             plot_reach_depletion(config)
-    if args.stage in {"metrics", "all"}:
+    if args.stage == "metrics" or (
+        args.stage == "all" and outputs.get("dry_season_metrics", True)
+    ):
         extract_dry_season_metrics(config)
 
 

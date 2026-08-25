@@ -19,15 +19,17 @@ from gw_simulator.groundwater import (
     build_monthly_pumping_maps,
 )
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dem", default=Path("data/drainage_area_10m_dem_clipped.tif"), type=Path)
-    parser.add_argument("--boundary", default=Path("data/comid_8273277.gpkg"), type=Path)
-    parser.add_argument("--transmissivity", default=Path("data/GLYMPHS/transmissivity_m2d.tif"), type=Path)
-    parser.add_argument("--depth-to-bedrock", default=Path("data/GLYMPHS/depthToBedrock_m.tif"), type=Path)
-    parser.add_argument("--porosity", default=Path("data/GLYMPHS/storativity.tif"), type=Path)
-    parser.add_argument("--output-dir", default=Path("outputs/sim_test_2021_2023"), type=Path)
-    parser.add_argument("--date", default="2022-09-30", type=str, help="Date of snapshot to plot")
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Plot a groundwater cross section from saved model snapshots."
+    )
+    parser.add_argument("--dem", required=True, type=Path)
+    parser.add_argument("--boundary", required=True, type=Path)
+    parser.add_argument("--transmissivity", required=True, type=Path)
+    parser.add_argument("--depth-to-bedrock", required=True, type=Path)
+    parser.add_argument("--porosity", required=True, type=Path)
+    parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--date", required=True, type=str, help="Date of snapshot to plot")
     parser.add_argument("--target-resolution", default=50.0, type=float)
     parser.add_argument("--target-crs", default="EPSG:26910")
     parser.add_argument("--stream-area-threshold", default=250000.0, type=float)
@@ -116,8 +118,9 @@ def main():
     wt_pumped_path = output_dir / f"wt_pumped_{args.date}.npy"
     
     if not wt_unimp_path.exists():
-        print(f"Error: Unimpaired snapshot for {args.date} not found in {output_dir}")
-        return
+        raise FileNotFoundError(
+            f"Unimpaired snapshot for {args.date} not found in {output_dir}"
+        )
 
     wt_unimp = np.load(wt_unimp_path)
     expected_shape = (grid.number_of_nodes,)
