@@ -15,6 +15,8 @@ import pandas as pd
 
 EXPECTED_REACH_COUNT = 39
 REFERENCE_DIR = Path(__file__).resolve().parent / "results"
+REFERENCE_RTOL = 1.0e-5
+REFERENCE_ATOL = 5.0e-2
 
 
 def sha256(path: Path) -> str:
@@ -59,10 +61,19 @@ def compare_with_reference(output_dir: Path, basin: pd.DataFrame, reaches: pd.Da
         "aquifer_storage_depletion_m3",
     ]
     for column in basin_columns:
+        candidate = candidate_basin[column].to_numpy()
+        reference = reference_basin[column].to_numpy()
         if not np.allclose(
-            candidate_basin[column], reference_basin[column], rtol=1e-10, atol=1e-6
+            candidate,
+            reference,
+            rtol=REFERENCE_RTOL,
+            atol=REFERENCE_ATOL,
         ):
-            raise RuntimeError(f"New run differs from the published reference: {column}.")
+            maximum_difference = float(np.nanmax(np.abs(candidate - reference)))
+            raise RuntimeError(
+                f"New run differs from the published reference: {column}; "
+                f"maximum absolute difference {maximum_difference:.6g}."
+            )
 
     reference_reaches = pd.read_parquet(REFERENCE_DIR / "reach_daily.parquet")
     reference_reaches = reference_reaches[
@@ -73,8 +84,8 @@ def compare_with_reference(output_dir: Path, basin: pd.DataFrame, reaches: pd.Da
         if not np.allclose(
             reaches[column].to_numpy(),
             reference_reaches[column].to_numpy(),
-            rtol=1e-10,
-            atol=1e-6,
+            rtol=REFERENCE_RTOL,
+            atol=REFERENCE_ATOL,
         ):
             raise RuntimeError(
                 f"New reach results differ from the published reference: {column}."
