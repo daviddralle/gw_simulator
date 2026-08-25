@@ -85,9 +85,9 @@ incremental catchment. Routed values contain that local contribution and all
 upstream contributions. Routed values therefore must not be summed across
 reaches.
 
-![Routed June–October depletion in three contrasting years](results/network_reach_dry_season_contrasts.png)
+![Routed June–October depletion in three contrasting years](results/network_reach_dry_season_contrasts.png?v=2)
 
-![Distribution of modeled depletion across reaches](results/network_reach_response_distribution.png)
+![Distribution of modeled depletion across reaches](results/network_reach_response_distribution.png?v=2)
 
 The GV01-containing reach and the watershed outlet are marked for spatial
 reference. These are model results; observed GV01 streamflow is not included in
