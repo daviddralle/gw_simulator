@@ -38,7 +38,7 @@ The check verifies every published file against `SHA256SUMS`, confirms complete
 daily coverage and 39 reaches, and compares the routed outlet series against the
 basin depletion table.
 
-To rebuild the five figures displayed below from the checked-in result tables:
+To rebuild the six figures displayed below from the checked-in result tables:
 
 ```bash
 python example/plot_results.py
@@ -73,6 +73,11 @@ code hashes, run dates, and validation results are recorded in
 ## Basin hydrograph and depletion
 
 ![Unimpaired and pumped streamflow, recharge, and monthly depletion](results/hydrographs_2010-10-01_to_2024-09-30.png)
+
+![Daily basin streamflow depletion fraction](results/streamflow_depletion_fraction_2010-10-01_to_2024-09-30.png?v=1)
+
+Daily depletion is the pumping-induced streamflow loss divided by unimpaired
+total streamflow on the same day.
 
 ![Daily and cumulative streamflow depletion](results/depletion_timeseries_2010-10-01_to_2024-09-30.png)
 

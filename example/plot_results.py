@@ -314,6 +314,40 @@ def save_response_distribution(
     plt.close(fig)
 
 
+def save_depletion_fraction_timeseries(
+    depletion: pd.DataFrame,
+    output_path: Path,
+) -> None:
+    """Plot the daily basin depletion fraction over the full simulation."""
+    dates = pd.to_datetime(depletion["date"])
+    fraction = depletion["streamflow_depletion_fraction_pct"].to_numpy(dtype=float)
+
+    fig, axis = plt.subplots(figsize=(12.0, 4.8))
+    fig.subplots_adjust(left=0.09, right=0.985, top=0.82, bottom=0.18)
+    axis.fill_between(dates, 0.0, fraction, color="#9b111e", alpha=0.12, linewidth=0)
+    axis.plot(dates, fraction, color="#8b0000", linewidth=1.5)
+    axis.axhline(100.0, color="0.3", linestyle=":", linewidth=1.0)
+    axis.set_xlim(dates.min(), dates.max())
+    axis.set_ylim(0.0, 102.0)
+    axis.set_xlabel("Date")
+    axis.set_ylabel("Streamflow depletion (%)")
+    axis.grid(alpha=0.25)
+    axis.set_title(
+        "Daily pumping-induced depletion relative to unimpaired total streamflow",
+        fontsize=11,
+        color="0.3",
+        pad=10,
+    )
+    fig.suptitle(
+        "Basin streamflow depletion fraction",
+        fontsize=16,
+        fontweight="bold",
+        y=0.965,
+    )
+    fig.savefig(output_path, dpi=220, facecolor="white")
+    plt.close(fig)
+
+
 def rebuild_figures(inputs_dir: Path, results_dir: Path) -> None:
     natural_path = next(results_dir.glob("simulation_unimpaired_*.csv"))
     pumped_path = next(results_dir.glob("simulation_with_pumping_*.csv"))
@@ -361,6 +395,10 @@ def rebuild_figures(inputs_dir: Path, results_dir: Path) -> None:
             results_dir / f"depletion_timeseries_{date_slug}.png",
             start_date=start_date,
             end_date=end_date,
+        )
+        save_depletion_fraction_timeseries(
+            depletion,
+            results_dir / f"streamflow_depletion_fraction_{date_slug}.png",
         )
         save_reach_summary_map(
             daily,
