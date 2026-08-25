@@ -9,7 +9,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FFMpegWriter, writers
 from matplotlib.collections import LineCollection
-from matplotlib.colors import LogNorm, TwoSlopeNorm
+from matplotlib.colors import LogNorm, Normalize, TwoSlopeNorm
 from matplotlib.cm import ScalarMappable
 import numpy as np
 import pandas as pd
@@ -120,6 +120,7 @@ def _plot_network_values(
     cmap_name: str = "RdBu_r",
     percent: bool = False,
     log_scale: bool = False,
+    nonnegative: bool = False,
 ) -> dict[str, float | str]:
     finite = np.asarray(values, dtype=float)[np.isfinite(values)]
     if log_scale:
@@ -133,6 +134,14 @@ def _plot_network_values(
         norm = LogNorm(vmin=lower, vmax=upper)
         mapped_values = np.where(np.asarray(values, dtype=float) > 0.0, values, np.nan)
         display = {"scale": "log", "minimum": lower, "maximum": upper}
+    elif nonnegative:
+        upper = float(np.nanpercentile(finite, 98.0)) if finite.size else 1.0
+        upper = max(upper, 1.0)
+        if percent:
+            upper = min(upper, 100.0)
+        norm = Normalize(vmin=0.0, vmax=upper)
+        mapped_values = np.clip(np.asarray(values, dtype=float), 0.0, None)
+        display = {"scale": "linear", "minimum": 0.0, "maximum": upper}
     else:
         if finite.size:
             limit = float(np.nanpercentile(np.abs(finite), 98.0))
@@ -162,7 +171,7 @@ def _plot_network_values(
     scalar = ScalarMappable(norm=norm, cmap=cmap)
     colorbar = ax.figure.colorbar(scalar, ax=ax, fraction=0.04, pad=0.015)
     colorbar.set_label(
-        colorbar_label + (" (logarithmic color scale)" if log_scale else "")
+        colorbar_label + (" (log scale)" if log_scale else "")
     )
     ax.set_title(title)
     ax.set_axis_off()
@@ -207,15 +216,15 @@ def save_reach_summary_map(
     mapped = reaches.set_index("reach_id").join(summary).join(dry_summary)
     mapped = mapped.sort_index()
 
-    fig, axes = plt.subplots(2, 2, figsize=(11.5, 10.0), constrained_layout=True)
+    fig, axes = plt.subplots(2, 2, figsize=(12.0, 10.5), constrained_layout=True)
     limits = {}
     limits["cumulative_local_depletion_m3"] = _plot_network_values(
         axes[0, 0],
         boundary,
         mapped,
         mapped["cumulative_local_depletion"].to_numpy(),
-        "Cumulative reach-local flow depletion",
-        "m³ over simulation",
+        "Reach-local depletion",
+        "Cumulative depletion (m³)",
         cmap_name="viridis",
         log_scale=True,
     )
@@ -224,8 +233,8 @@ def save_reach_summary_map(
         boundary,
         mapped,
         mapped["cumulative_routed_depletion"].to_numpy(),
-        "Cumulative upstream-integrated flow depletion",
-        "m³ over simulation",
+        "Routed depletion",
+        "Cumulative depletion (m³)",
         cmap_name="viridis",
         log_scale=True,
     )
@@ -234,26 +243,31 @@ def save_reach_summary_map(
         boundary,
         mapped,
         mapped["full_fraction"].to_numpy(),
-        "Full-period upstream-integrated depletion fraction",
-        "% of unimpaired integrated flow",
+        "Full-period routed depletion",
+        "Depletion (% of unimpaired flow)",
+        cmap_name="YlOrRd",
         percent=True,
+        nonnegative=True,
     )
     limits["june_october_fraction_pct"] = _plot_network_values(
         axes[1, 1],
         boundary,
         mapped,
         mapped["dry_fraction"].to_numpy(),
-        "June–October upstream-integrated depletion fraction",
-        "% of unimpaired integrated flow",
+        "June–October routed depletion",
+        "Depletion (% of unimpaired flow)",
+        cmap_name="YlOrRd",
         percent=True,
+        nonnegative=True,
     )
     fig.suptitle(
-        "Total flow depletion by reach",
-        fontsize=15,
+        "Reach-scale streamflow depletion",
+        fontsize=16,
+        fontweight="bold",
     )
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=250, bbox_inches="tight")
+    fig.savefig(output_path, dpi=220, bbox_inches="tight")
     plt.close(fig)
     return {"display_limits": limits}
 

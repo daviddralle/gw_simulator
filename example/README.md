@@ -38,6 +38,12 @@ The check verifies every published file against `SHA256SUMS`, confirms complete
 daily coverage and 39 reaches, and compares the routed outlet series against the
 basin depletion table.
 
+To rebuild the five figures displayed below from the checked-in result tables:
+
+```bash
+python example/plot_results.py
+```
+
 ## Inputs and numerical method
 
 The run used:
