@@ -1,9 +1,20 @@
-# gw_simulator
+# DupuitPercolator with Pumping
 
-`gw_simulator` runs catchment-scale, transient Dupuit–Boussinesq groundwater
-simulations with optional pumping. A paired run compares an unimpaired branch
-with an otherwise identical pumped branch and reports changes in total modeled
-streamflow, aquifer storage, and flow through each extracted stream reach.
+<p align="center">
+  <img src="docs/assets/dupuit-percolator-pumping-banner.png" alt="Ridge-to-stream groundwater cross-section with pumping" width="100%">
+</p>
+
+This repository builds on Landlab's
+[`GroundwaterDupuitPercolator`](https://landlab.csdms.io/generated/api/landlab.components.groundwater.dupuit_percolator.html),
+developed by David Litwin, Gregory Tucker, Katherine Barnhart, and Ciaran Harman
+([Litwin et al., 2020](https://doi.org/10.21105/joss.01935)). That component
+provides the two-dimensional Dupuit–Boussinesq groundwater solver.
+
+The `gw_simulator` package adds watershed data preparation, spatially
+distributed pumping, paired unimpaired and pumped simulations,
+water-availability-limited stream exchange, and reach-resolved streamflow
+depletion accounting. It reports changes in total modeled streamflow, aquifer
+storage, and flow through each extracted stream reach.
 
 The model is intended for screening and sensitivity analysis. It is not a
 calibrated groundwater model unless the user supplies and evaluates calibrated
