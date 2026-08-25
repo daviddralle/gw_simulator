@@ -227,11 +227,21 @@ def save_response_distribution(
         zorder=2,
     )
 
+    panel_b_label_offsets = {18: (7, 7), 4: (7, 6), 6: (7, -10)}
     for _, row in data.head(3).iterrows():
+        reach_id = int(row["reach_id"])
+        fraction = row["integrated_routed_streamflow_depletion_fraction_pct"]
         axes[0].annotate(
-            f"R{int(row['reach_id'])}",
-            (row["rank"], row["integrated_routed_streamflow_depletion_fraction_pct"]),
+            f"R{reach_id}",
+            (row["rank"], fraction),
             xytext=(5, 6),
+            textcoords="offset points",
+            fontsize=8.5,
+        )
+        axes[1].annotate(
+            f"R{reach_id}",
+            (row["upstream_area_km2"], fraction),
+            xytext=panel_b_label_offsets[reach_id],
             textcoords="offset points",
             fontsize=8.5,
         )
@@ -240,16 +250,10 @@ def save_response_distribution(
     if len(outlet_rows) != 1:
         raise ValueError("Expected exactly one outlet reach.")
     special_reaches = (
-        (GV01_REACH_ID, "GV01 reach", "D", "#187a3a", (0, -18)),
-        (
-            int(outlet_rows.iloc[0]["reach_id"]),
-            "Outlet reach",
-            "*",
-            "black",
-            (0, 13),
-        ),
+        (GV01_REACH_ID, "GV01 reach", "D", "#187a3a"),
+        (int(outlet_rows.iloc[0]["reach_id"]), "Outlet reach", "*", "black"),
     )
-    for reach_id, label, marker, color, label_offset in special_reaches:
+    for reach_id, label, marker, color in special_reaches:
         row = data.loc[data["reach_id"] == reach_id]
         if row.empty:
             raise ValueError(f"Reach {reach_id} is missing from the summary table.")
@@ -269,21 +273,6 @@ def save_response_distribution(
                 zorder=4,
                 label=label if axis is axes[1] else None,
             )
-            if axis is axes[0]:
-                axis.annotate(
-                    f"{label} (R{reach_id})",
-                    (
-                        x_value,
-                        row["integrated_routed_streamflow_depletion_fraction_pct"],
-                    ),
-                    xytext=label_offset,
-                    textcoords="offset points",
-                    ha="center",
-                    va="top" if label_offset[1] < 0 else "bottom",
-                    fontsize=8.5,
-                    color=color,
-                    zorder=5,
-                )
 
     axes[0].set_title("(a) Ranked depletion fractions", pad=10)
     axes[0].set_xlabel("Reach rank (largest fraction first)")
