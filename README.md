@@ -1,7 +1,7 @@
 # DupuitPercolator with Pumping
 
 <p align="center">
-  <img src="docs/assets/dupuit-percolator-pumping-banner.png" alt="Ridge-to-stream groundwater cross-section with pumping" width="900">
+  <img src="docs/assets/dupuit-percolator-pumping-banner.png" alt="Ridge-to-stream groundwater cross-section with pumping" width="100%">
 </p>
 
 This repository builds on Landlab's
