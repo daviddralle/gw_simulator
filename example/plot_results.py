@@ -148,8 +148,9 @@ def save_dry_season_contrasts(
     fig.text(
         0.5,
         0.045,
-        "All 39 modeled reaches. Line width scales with upstream drainage area; "
-        "gray indicates an undefined seasonal fraction.",
+        "All 39 modeled reaches. Gray reaches had ≤1 m³ of modeled unimpaired "
+        "June–October flow, so their depletion fractions are undefined. Line width "
+        "scales with upstream drainage area.",
         ha="center",
         color="0.35",
         fontsize=9,
@@ -239,10 +240,16 @@ def save_response_distribution(
     if len(outlet_rows) != 1:
         raise ValueError("Expected exactly one outlet reach.")
     special_reaches = (
-        (GV01_REACH_ID, "GV01 reach", "D", "#187a3a"),
-        (int(outlet_rows.iloc[0]["reach_id"]), "Outlet reach", "*", "black"),
+        (GV01_REACH_ID, "GV01 reach", "D", "#187a3a", (0, -18)),
+        (
+            int(outlet_rows.iloc[0]["reach_id"]),
+            "Outlet reach",
+            "*",
+            "black",
+            (0, 13),
+        ),
     )
-    for reach_id, label, marker, color in special_reaches:
+    for reach_id, label, marker, color, label_offset in special_reaches:
         row = data.loc[data["reach_id"] == reach_id]
         if row.empty:
             raise ValueError(f"Reach {reach_id} is missing from the summary table.")
@@ -262,6 +269,21 @@ def save_response_distribution(
                 zorder=4,
                 label=label if axis is axes[1] else None,
             )
+            if axis is axes[0]:
+                axis.annotate(
+                    f"{label} (R{reach_id})",
+                    (
+                        x_value,
+                        row["integrated_routed_streamflow_depletion_fraction_pct"],
+                    ),
+                    xytext=label_offset,
+                    textcoords="offset points",
+                    ha="center",
+                    va="top" if label_offset[1] < 0 else "bottom",
+                    fontsize=8.5,
+                    color=color,
+                    zorder=5,
+                )
 
     axes[0].set_title("(a) Ranked depletion fractions", pad=10)
     axes[0].set_xlabel("Reach rank (largest fraction first)")
