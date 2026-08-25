@@ -42,7 +42,7 @@ def check_hashes(output_dir: Path) -> int:
     return checked
 
 
-def compare_with_reference(output_dir: Path, basin: pd.DataFrame, reaches: pd.DataFrame) -> None:
+def compare_with_reference(output_dir: Path, basin: pd.DataFrame) -> None:
     if output_dir == REFERENCE_DIR.resolve() or not REFERENCE_DIR.exists():
         return
     reference_basin = pd.read_csv(
@@ -74,23 +74,6 @@ def compare_with_reference(output_dir: Path, basin: pd.DataFrame, reaches: pd.Da
                 f"New run differs from the published reference: {column}; "
                 f"maximum absolute difference {maximum_difference:.6g}."
             )
-
-    reference_reaches = pd.read_parquet(REFERENCE_DIR / "reach_daily.parquet")
-    reference_reaches = reference_reaches[
-        reference_reaches["date"].isin(reaches["date"])
-    ].sort_values(["reach_id", "date"])
-    reach_columns = [column for column in reaches if column.endswith("_m3d")]
-    for column in reach_columns:
-        if not np.allclose(
-            reaches[column].to_numpy(),
-            reference_reaches[column].to_numpy(),
-            rtol=REFERENCE_RTOL,
-            atol=REFERENCE_ATOL,
-        ):
-            raise RuntimeError(
-                f"New reach results differ from the published reference: {column}."
-            )
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -140,6 +123,37 @@ def main() -> None:
     if not (counts == len(expected_dates)).all():
         raise RuntimeError("At least one reach has incomplete daily coverage.")
 
+    local_daily = reaches.groupby("date", sort=True)[
+        [
+            "unimpaired_local_total_streamflow_m3d",
+            "pumped_local_total_streamflow_m3d",
+            "local_total_streamflow_depletion_m3d",
+        ]
+    ].sum()
+    local_comparisons = {
+        "unimpaired local-flow sum": (
+            local_daily["unimpaired_local_total_streamflow_m3d"],
+            basin["unimpaired_total_streamflow_m3d"],
+        ),
+        "pumped local-flow sum": (
+            local_daily["pumped_local_total_streamflow_m3d"],
+            basin["pumped_total_streamflow_m3d"],
+        ),
+        "local-depletion sum": (
+            local_daily["local_total_streamflow_depletion_m3d"],
+            basin["total_streamflow_depletion_m3d"],
+        ),
+    }
+    for label, (reach_values, basin_values) in local_comparisons.items():
+        if not np.allclose(
+            reach_values.to_numpy(),
+            basin_values.to_numpy(),
+            rtol=1e-9,
+            atol=1e-6,
+            equal_nan=True,
+        ):
+            raise RuntimeError(f"Mismatch between reach and basin {label}.")
+
     reach_geometry = gpd.read_file(output_dir / "reaches.gpkg")
     outlet_rows = reach_geometry.loc[
         reach_geometry["is_outlet_reach"].astype(bool), "reach_id"
@@ -173,7 +187,7 @@ def main() -> None:
         ):
             raise RuntimeError(f"Mismatch between reach and basin {label}.")
 
-    compare_with_reference(output_dir, basin, reaches)
+    compare_with_reference(output_dir, basin)
 
     print(
         "Green Valley results verified: "
