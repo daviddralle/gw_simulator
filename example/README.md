@@ -1,14 +1,42 @@
-# Green Valley case study
+# Green Valley example
 
-This directory contains selected results from the current Green Valley
-application. The modeled watershed is 15.836 km² and contains 39 extracted
-stream reaches. The paired simulation covers 2010-10-01 through 2024-09-30 after
-an unpumped transient spin-up from 2008-10-01 through 2010-09-30.
+This directory is the primary worked example for the repository. It contains
+results from the current small Green Valley catchment simulation. The modeled
+watershed is 15.836 km² and contains 39 extracted stream reaches. The runnable
+configuration covers water year 2020 and uses checked-in unimpaired and pumped
+model states from 2019-09-30. The reference results cover 2010-10-01 through
+2024-09-30 after an unpumped transient spin-up from 2008-10-01 through
+2010-09-30.
 
-This is a results archive, not the public execution example. The site pumping
-data and the project's continental hydrogeology rasters are not distributed in
-the repository. Use [`../synthetic_basin`](../synthetic_basin) to run the model
-from a clean clone.
+Everything needed to run the example is in this directory. From the repository
+root, after installing the environment, run:
+
+```bash
+bash example/run.sh
+```
+
+The simulation writes new files to `example/run` and typically takes about
+5–10 minutes on a laptop. The checked-in full-period results used for the
+figures below are in `example/results`.
+
+The `inputs` directory contains the watershed boundary, 3DEP DEM, clipped
+hydrogeologic rasters, recharge series, anonymized well points, 12-month pumping
+climatology, and the two 2019-09-30 model states used to start the example. The
+anonymized climatology produces the same spatial pumping forcing as the source
+case-study records without distributing parcel identifiers or the full source
+table.
+
+## Check the published results
+
+From the repository root, after installing the environment:
+
+```bash
+python example/check_results.py
+```
+
+The check verifies every published file against `SHA256SUMS`, confirms complete
+daily coverage and 39 reaches, and compares the routed outlet series against the
+basin depletion table.
 
 ## Inputs and numerical method
 
@@ -29,31 +57,31 @@ All three hydrogeologic fields were from the continental/legacy set. The files
 were formerly stored under a `GLYMPHS` directory, but they are not GLHYMPS 2.0
 products. A primary publication or complete processing record for this raster
 set has not been recovered, so the case study should not be presented as a
-calibrated or fully reproducible site model.
+calibrated site model. The packaged inputs reproduce the water-year 2020 portion
+of the full simulation.
 
-The exact numerical configuration is in
-[`../../configs/green_valley.yml`](../../configs/green_valley.yml). Input hashes,
+The exact numerical configuration is in [`config.yml`](config.yml). Input hashes,
 code hashes, run dates, and validation results are recorded in
-[`outputs/simulation_metadata.json`](outputs/simulation_metadata.json).
+[`results/simulation_metadata.json`](results/simulation_metadata.json).
 
 ## Basin hydrograph and depletion
 
-![Unimpaired and pumped streamflow, recharge, and monthly depletion](outputs/hydrographs_2010-10-01_to_2024-09-30.png)
+![Unimpaired and pumped streamflow, recharge, and monthly depletion](results/hydrographs_2010-10-01_to_2024-09-30.png)
 
-![Daily and cumulative streamflow depletion](outputs/depletion_timeseries_2010-10-01_to_2024-09-30.png)
+![Daily and cumulative streamflow depletion](results/depletion_timeseries_2010-10-01_to_2024-09-30.png)
 
 ## Reach-network results
 
-![Cumulative local and routed depletion and depletion fractions across 39 reaches](outputs/network_reach_depletion_summary.png)
+![Cumulative local and routed depletion and depletion fractions across 39 reaches](results/network_reach_depletion_summary.png)
 
 Local values describe flow generated along one reach and within its disjoint
 incremental catchment. Routed values contain that local contribution and all
 upstream contributions. Routed values therefore must not be summed across
 reaches.
 
-![Routed June–October depletion in three contrasting years](outputs/network_reach_dry_season_contrasts.png)
+![Routed June–October depletion in three contrasting years](results/network_reach_dry_season_contrasts.png)
 
-![Distribution of modeled depletion across reaches](outputs/network_reach_response_distribution.png)
+![Distribution of modeled depletion across reaches](results/network_reach_response_distribution.png)
 
 The GV01-containing reach and the watershed outlet are marked for spatial
 reference. These are model results; observed GV01 streamflow is not included in
@@ -78,7 +106,7 @@ this public example.
 - `SHA256SUMS`: checksums for every published case-study file.
 
 Column definitions and interpretation rules are in
-[`../../docs/REACH_OUTPUTS.md`](../../docs/REACH_OUTPUTS.md).
+[`../docs/REACH_OUTPUTS.md`](../docs/REACH_OUTPUTS.md).
 
 ## Interpretation
 

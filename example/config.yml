@@ -1,0 +1,55 @@
+version: 1
+name: green_valley
+root: ..
+
+boundary: example/inputs/boundary.gpkg
+dem: example/inputs/dem.tif
+recharge_csv: example/inputs/recharge.csv
+transmissivity: example/inputs/transmissivity.tif
+depth_to_bedrock: example/inputs/depth_to_bedrock.tif
+porosity: example/inputs/specific_yield.tif
+wells: example/inputs/wells.gpkg
+pumping_schedule: example/inputs/pumping_climatology.csv
+initial_heads: example/inputs/initial_heads_unimpaired_2019-09-30.npy
+pumped_initial_heads: example/inputs/initial_heads_pumped_2019-09-30.npy
+output_dir: example/run
+
+recharge:
+  source: csv
+
+groundwater:
+  start_date: 2019-10-01
+  end_date: 2020-09-30
+  target_crs: EPSG:26910
+  target_resolution_m: 50.0
+  stream_area_threshold_m2: 250000.0
+  courant_coefficient: 0.5
+  stream_drain_offset_m: 0.0
+  additional_aquifer_depth_m: 0.0
+  deep_aquifer_hydraulics: preserve_transmissivity
+  specific_yield_floor: 0.0
+  stream_loss_mode: routed_volume_limited
+  stream_limiter_tolerance_m3: 1.0e-6
+  stream_limiter_max_iterations: 25
+
+pumping:
+  enabled: true
+  mode: climatology
+  source_mode: topographic
+  source_area_threshold_m2: 500000.0
+  source_zone_storage_fraction: 0.5
+  pumping_storage_fraction: 0.5
+  strict_supply: false
+
+outputs:
+  snapshot_dates:
+    - 2020-09-30
+  cross_section_dates:
+    - 2020-09-30
+  reach_fraction_rolling_days: 30
+  reach_visualizations: false
+  dry_season_metrics: false
+
+limits:
+  warn_node_count: 2000000
+  warn_memory_gb: 8.0

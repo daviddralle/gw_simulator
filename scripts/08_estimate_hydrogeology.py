@@ -413,7 +413,7 @@ def main() -> None:
             "dynamic-storage, and diffusivity signatures from a supplied hydrograph."
         )
     )
-    parser.add_argument("--config", type=Path, default=Path("configs/green_valley_domain.yml"))
+    parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--well-dir", type=Path, default=DEFAULT_WELL_DIR)
     parser.add_argument("--streamflow", type=Path)
     parser.add_argument("--date-column", default="date")

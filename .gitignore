@@ -3,6 +3,7 @@ data/
 /runs/
 /output/
 /tmp/
+/example/run/
 .venv/
 .pytest_cache/
 .coverage
